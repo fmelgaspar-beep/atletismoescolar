@@ -1,311 +1,248 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Inscrição – Jogos Escolares (Atletismo Convencional)</title>
 <style>
-  :root {
-    --bg: #0f172a; --panel: #111827ee; --muted: #94a3b8; --text: #e5e7eb;
-    --accent: #22d3ee; --accent-2: #a78bfa; --ok: #34d399; --warn: #f59e0b; --error: #fb7185;
-    --border: #1f2937;
-  }
-  * { box-sizing: border-box; }
-  body { margin:0; background: radial-gradient(1200px 800px at 10% -10%, #0b1022 0%, #080c1a 25%, var(--bg) 60%); color: var(--text); font-family: system-ui, sans-serif; line-height:1.45; }
-  .container { max-width:1100px; margin:24px auto; padding:16px; }
-  .card { background: linear-gradient(180deg,#0b1224,#0a0f1e); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px #0005; padding:20px; margin-bottom:16px; }
-  h1,h2,h3{margin:0 0 12px;}
-  h1{font-size:1.6rem;letter-spacing:.2px;}
-  h2{font-size:1.2rem;color:var(--accent);}
-  label{display:block;margin:8px 0 6px;color:var(--muted);font-size:.95rem;}
-  input[type="text"], input[type="date"], input[type="email"], input[type="tel"], select { width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0b1020;color:var(--text); }
-  .row { display:grid; grid-template-columns:repeat(12,1fr); gap:12px; }
-  .col-6{grid-column:span 6;}
-  .col-4{grid-column:span 4;}
-  .col-3{grid-column:span 3;}
-  .col-12{grid-column:span 12;}
-  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#0b1020;}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:#0b1328;color:var(--text);cursor:pointer;}
-  .btn:hover{filter: brightness(1.05);}
-  .btn-primary{background: linear-gradient(90deg,#0ea5e9,#22d3ee); border:none; color:#021015; font-weight:700;}
-  .btn-danger{background: linear-gradient(90deg,#f43f5e,#fb7185); border:none; color:#160709; font-weight:700;}
-  .muted{color:var(--muted);font-size:.92rem;}
-  .divider{height:1px;background:linear-gradient(90deg,transparent,#1f2937,transparent);margin:14px 0;}
-  .grid-events{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
-  .event{border:1px solid var(--border);border-radius:12px;padding:10px;background:#0b1020;display:flex;justify-content:space-between;align-items:center;gap:10px;}
-  .event.disabled{opacity:.45;filter:grayscale(0.2);}
-  .badge{padding:2px 8px;border-radius:999px;font-size:.8rem;border:1px solid var(--border);}
-  .badge.ok{background:#05281c;color:var(--ok);border-color:#064e3b;}
-  .badge.warn{background:#2a1d05;color:var(--warn);border-color:#7c4a03;}
-  .badge.error{background:#2a0a0e;color:var(--error);border-color:#7f1d1d;}
-  details{border:1px solid var(--border);border-radius:12px;padding:12px;background:#0b1020;}
-  summary{cursor:pointer;color: var(--accent-2); font-weight:600;}
-  .sticky-footer{position:sticky;bottom:0;background:linear-gradient(180deg,#0a0f1e,#0b1224);border-top:1px solid var(--border);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-radius:14px;}
-  .help{font-size:.9rem;color:var(--muted);}
-  .small{font-size:.85rem;color:var(--muted);}
-  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#0b1328;border:1px solid var(--border);font-size:.85rem;}
-  .student-card{position: relative;}
-  .student-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;}
-  .counter{display:flex;gap:8px;flex-wrap:wrap;}
-  .hidden{display:none !important;}
-  @media (max-width:840px){
-    .grid-events{grid-template-columns:1fr;}
-    .row{grid-template-columns:1fr;}
-    .col-6,.col-4,.col-3,.col-12{grid-column:span 1;}
-  }
+:root {
+  --bg:#0f172a;--panel:#111827ee;--muted:#94a3b8;--text:#e5e7eb;
+  --accent:#22d3ee;--accent-2:#a78bfa;--ok:#34d399;--warn:#f59e0b;--error:#fb7185;--border:#1f2937;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:radial-gradient(1200px 800px at 10% -10%,#0b1022 0%,#080c1a 25%,var(--bg) 60%);
+color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";line-height:1.45;}
+.container{max-width:1100px;margin:24px auto;padding:16px;}
+.card{background:linear-gradient(180deg,#0b1224,#0a0f1e);border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 30px #0005;padding:20px;margin-bottom:16px;}
+h1,h2,h3{margin:0 0 12px;}
+h1{font-size:1.6rem;letter-spacing:.2px;}
+h2{font-size:1.2rem;color:var(--accent);}
+label{display:block;margin:8px 0 6px;color:var(--muted);font-size:.95rem;}
+input[type="text"],input[type="date"],input[type="email"],input[type="tel"],select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0b1020;color:var(--text);}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;}
+.col-6{grid-column:span 6;}
+.col-4{grid-column:span 4;}
+.col-3{grid-column:span 3;}
+.col-12{grid-column:span 12;}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#0b1020;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:#0b1328;color:var(--text);cursor:pointer;}
+.btn:hover{filter:brightness(1.05);}
+.btn-primary{background:linear-gradient(90deg,#0ea5e9,#22d3ee);border:none;color:#021015;font-weight:700;}
+.btn-danger{background:linear-gradient(90deg,#f43f5e,#fb7185);border:none;color:#160709;font-weight:700;}
+.muted{color:var(--muted);font-size:.92rem;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#1f2937,transparent);margin:14px 0;}
+.grid-events{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.event{border:1px solid var(--border);border-radius:12px;padding:10px;background:#0b1020;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.event.disabled{opacity:.45;filter:grayscale(0.2);}
+.badge{padding:2px 8px;border-radius:999px;font-size:.8rem;border:1px solid var(--border);}
+.badge.ok{background:#05281c;color:var(--ok);border-color:#064e3b;}
+.badge.warn{background:#2a1d05;color:var(--warn);border-color:#7c4a03;}
+.badge.error{background:#2a0a0e;color:var(--error);border-color:#7f1d1d;}
+details{border:1px solid var(--border);border-radius:12px;padding:12px;background:#0b1020;}
+summary{cursor:pointer;color:var(--accent-2);font-weight:600;}
+.sticky-footer{position:sticky;bottom:0;background:linear-gradient(180deg,#0a0f1e,#0b1224);border-top:1px solid var(--border);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-radius:14px;}
+.help{font-size:.9rem;color:var(--muted);}
+.small{font-size:.85rem;color:var(--muted);}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#0b1328;border:1px solid var(--border);font-size:.85rem;}
+.student-card{position:relative;}
+.student-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;}
+.counter{display:flex;gap:8px;flex-wrap:wrap;}
+.hidden{display:none !important;}
+@media(max-width:840px){.grid-events{grid-template-columns:1fr;}.row{grid-template-columns:1fr;}.col-6,.col-4,.col-3,.col-12{grid-column:span 1;}}
 </style>
 </head>
 <body>
 <div class="container">
-  <div class="card">
-    <h1>Inscrição – Atletismo Convencional • Jogos Escolares de Gaspar</h1>
-    <p class="muted">Cada escola pode inscrever até 2 alunos por prova. Cada aluno pode participar de até 2 provas individuais + 1 revezamento.</p>
-  </div>
 
-  <!-- Identificação da Unidade de Ensino -->
-  <div class="card">
-    <h2>1) Identificação da Unidade de Ensino</h2>
-    <div class="row">
-      <div class="col-6">
-        <label for="school">Nome da Unidade de Ensino</label>
-        <input id="school" type="text" required placeholder="Ex.: EEB João XXIII" />
-      </div>
-      <div class="col-6">
-        <label for="teacher">Nome do Professor Responsável</label>
-        <input id="teacher" type="text" required placeholder="Nome completo" />
-      </div>
-      <div class="col-6">
-        <label for="email">Email de Contato</label>
-        <input id="email" type="email" placeholder="ex.: contato@escola.com" />
-      </div>
-      <div class="col-6">
-        <label for="phone">Telefone</label>
-        <input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" />
-      </div>
-    </div>
-  </div>
-
-  <!-- Lista dinâmica de alunos -->
-  <div class="card">
-    <div class="student-header">
-      <h2>2) Inscrição de Alunos</h2>
-      <div class="counter">
-        <span class="chip"><strong>Total de alunos:</strong> <span id="totalStudents">0</span></span>
-      </div>
-    </div>
-    <div id="students"></div>
-    <div class="divider"></div>
-    <button class="btn btn-primary" id="addStudentBtn" type="button">+ Adicionar aluno</button>
-  </div>
-
-  <!-- Rodapé com ações -->
-  <div class="card sticky-footer">
-    <div class="help">Validações ativas: 2 alunos por prova, 2 provas por aluno, categoria compatível com idade, gênero compatível.</div>
-    <div style="display:flex; gap:8px;">
-      <button class="btn" type="button" id="previewBtn">Pré-visualizar JSON</button>
-      <button class="btn btn-primary" type="button" id="submitBtn">Enviar inscrições</button>
-    </div>
-  </div>
+<!-- Identificação da Unidade de Ensino -->
+<div class="card">
+<h2>1) Identificação da Unidade de Ensino</h2>
+<div class="row">
+<div class="col-6"><label for="school">Nome da Unidade</label><input id="school" type="text" required placeholder="Ex.: EEB João XXIII"></div>
+<div class="col-6"><label for="teacher">Nome do Professor Responsável</label><input id="teacher" type="text" required></div>
+<div class="col-6"><label for="email">Email de Contato</label><input id="email" type="email" required></div>
+<div class="col-6"><label for="phone">Telefone</label><input id="phone" type="tel" required></div>
+</div>
 </div>
 
+<!-- Lista dinâmica de alunos -->
+<div class="card">
+<div class="student-header">
+<h2>2) Inscrição de Alunos</h2>
+<div class="counter">
+<span class="chip"><strong>Total de alunos:</strong> <span id="totalStudents">0</span></span>
+</div>
+</div>
+<div id="students"></div>
+<div class="divider"></div>
+<button class="btn btn-primary" id="addStudentBtn" type="button">+ Adicionar aluno</button>
+</div>
+
+<!-- Rodapé com ações -->
+<div class="card sticky-footer">
+<div class="help">Limites: 2 atletas por prova individual/gênero • 4 atletas por revezamento/gênero</div>
+<div style="display:flex;gap:8px;">
+<button class="btn" id="previewBtn" type="button">Pré-visualizar JSON</button>
+<button class="btn btn-primary" id="submitBtn" type="button">Enviar inscrições</button>
+</div>
+</div>
+</div>
+
+<!-- Template do aluno -->
 <template id="studentTemplate">
 <div class="card student-card" data-student-id="">
-  <div class="student-header">
-    <h3>Aluno <span class="student-number"></span></h3>
-    <button class="btn btn-danger btnRemove" type="button">Remover</button>
-  </div>
-  <div class="row">
-    <div class="col-6">
-      <label>Nome do Aluno/Atleta</label>
-      <input type="text" class="inp-name" required placeholder="Nome completo" />
-    </div>
-    <div class="col-3">
-      <label>Data de Nascimento</label>
-      <input type="date" class="inp-dob" required />
-    </div>
-    <div class="col-3">
-      <label>CPF/RG</label>
-      <input type="text" class="inp-doc" required placeholder="Somente números / RG" />
-    </div>
-    <div class="col-3">
-      <label>Gênero</label>
-      <select class="sel-gender" required>
-        <option value="">Selecione…</option>
-        <option value="M">Masculino</option>
-        <option value="F">Feminino</option>
-      </select>
-    </div>
-    <div class="col-3">
-      <label>Categoria</label>
-      <select class="sel-category" required>
-        <option value="">Selecione…</option>
-        <option value="Mirim">Mirim - 10 a 13 anos (2012 a 2015)</option>
-        <option value="Infantil">Infantil - 13 a 15 anos (2010 a 2012)</option>
-        <option value="Infanto">Infanto - 15 a 17 anos (2008 a 2010)</option>
-      </select>
-    </div>
-    <div class="col-6">
-      <label>Resumo de seleção</label>
-      <div class="pill"><span class="small">Provas individuais:</span> <b class="ind-count">0</b> / 2 &nbsp;•&nbsp; <span class="small">Revezamento:</span> <b class="relay-label">—</b></div>
-    </div>
-  </div>
-  <div class="divider"></div>
-  <h3>Provas Individuais (máx. 2)</h3>
-  <div class="grid-events ind-events"></div>
-  <div class="divider"></div>
-  <h3>Revezamento (opcional)</h3>
-  <div class="grid-events relay-events"></div>
+<div class="student-header">
+<h3>Aluno <span class="student-number"></span></h3>
+<button class="btn btn-danger btnRemove" type="button">Remover</button>
+</div>
+<div class="row">
+<div class="col-6"><label>Nome do Aluno/Atleta</label><input type="text" class="inp-name" required placeholder="Nome completo"></div>
+<div class="col-3"><label>Data de Nascimento</label><input type="date" class="inp-dob" required></div>
+<div class="col-3"><label>CPF/RG</label><input type="text" class="inp-doc" required placeholder="Somente números / RG"></div>
+<div class="col-3"><label>Gênero</label><select class="sel-gender" required><option value="">Selecione…</option><option value="Masculino">Masculino</option><option value="Feminino">Feminino</option></select></div>
+<div class="col-3"><label>Categoria</label><select class="sel-category" required></select></div>
+<div class="col-6"><label>Resumo de seleção</label><div class="pill"><span class="small">Provas individuais:</span> <b class="ind-count">0</b> / 2 &nbsp;•&nbsp; <span class="small">Revezamento:</span> <b class="relay-label">—</b></div></div>
+</div>
+<div class="divider"></div>
+<h3>Provas Individuais (máx. 2)</h3>
+<div class="grid-events ind-events"></div>
+<div class="divider"></div>
+<h3>Revezamento (opcional)</h3>
+<div class="grid-events relay-events"></div>
 </div>
 </template>
 
 <script>
-const EVENTS = {
-  individual: [
-    {id:'75m',label:'75 m',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
-    {id:'200m',label:'200 m',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
-    {id:'400m',label:'400 m',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
-    {id:'600m',label:'600 m',categories:['Infantil'],genders:['M','F']},
-    {id:'800m',label:'800 m',categories:['Infanto'],genders:['M','F']},
-    {id:'peso',label:'Arremesso de Peso',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
-    {id:'altura',label:'Salto em Altura',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
-    {id:'distancia',label:'Salto em Distância',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
-  ],
-  relay:[
-    {id:'4x50',label:'Revezamento 4x50 m',categories:['Mirim'],genders:['M','F']},
-    {id:'4x100',label:'Revezamento 4x100 m',categories:['Infantil','Infanto'],genders:['M','F']}
-  ]
+// ============================
+// Configuração de provas
+// ============================
+const EVENTS={
+individual:[
+{id:'75m',label:'75 m',categories:['Mirim','Infantil','Infanto']},
+{id:'200m',label:'200 m',categories:['Mirim','Infantil','Infanto']},
+{id:'400m',label:'400 m',categories:['Mirim','Infantil','Infanto']},
+{id:'600m',label:'600 m',categories:['Infantil']},
+{id:'800m',label:'800 m',categories:['Infanto']},
+{id:'peso',label:'Arremesso de Peso',categories:['Mirim','Infantil','Infanto']},
+{id:'altura',label:'Salto em Altura',categories:['Mirim','Infantil','Infanto']},
+{id:'distancia',label:'Salto em Distância',categories:['Mirim','Infantil','Infanto']}
+],
+relay:[
+{id:'4x50',label:'Revezamento 4x50 m',categories:['Mirim']},
+{id:'4x100',label:'Revezamento 4x100 m',categories:['Infantil','Infanto']}
+]
 };
 
-const perEventCount={};
-[...EVENTS.individual,...EVENTS.relay].forEach(e=>perEventCount[e.id]=0);
+// Limites por prova por gênero
+const perEventGenderCount={};
+[...EVENTS.individual,...EVENTS.relay].forEach(e=>{
+  perEventGenderCount[e.id]={Masculino:0,Feminino:0};
+});
 
-const $=(sel,root=document)=>root.querySelector(sel);
-const $$=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
-
+// Helpers
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const studentsWrap=$('#students');
 const studentTpl=$('#studentTemplate');
 const totalStudentsEl=$('#totalStudents');
 
 let studentSeq=0;
-
 function addStudent(){
   const node=studentTpl.content.firstElementChild.cloneNode(true);
   const studentId=`s${++studentSeq}`;
   node.dataset.studentId=studentId;
   $('.student-number',node).textContent=studentSeq;
-  $('.btnRemove',node).addEventListener('click',()=>removeStudent(node));
+
+  $('.btnRemove',node).addEventListener('click',()=>{removeStudent(node);});
   $('.sel-category',node).addEventListener('change',()=>refreshStudentEvents(node));
-  $('.inp-dob',node).addEventListener('change',()=>refreshStudentEvents(node));
   $('.sel-gender',node).addEventListener('change',()=>refreshStudentEvents(node));
+  $('.inp-dob',node).addEventListener('change',()=>refreshStudentEvents(node));
+
   refreshStudentEvents(node);
   studentsWrap.appendChild(node);
   updateTotals();
+  saveToLocalStorage();
 }
 
 function removeStudent(card){
-  $$('input[type="checkbox"][data-ev]',card).forEach(chk=>{
-    if(chk.checked) perEventCount[chk.dataset.ev]=Math.max(0,(perEventCount[chk.dataset.ev]||0)-1);
+  $$('input[type="checkbox"]',card).forEach(chk=>{
+    if(chk.checked){
+      const g=$('.sel-gender',card).value;
+      perEventGenderCount[chk.dataset.ev][g]=Math.max(0,perEventGenderCount[chk.dataset.ev][g]-1);
+    }
   });
   card.remove();
-  recomputeEventCountsFromDOM();
   $$('.student-card').forEach(c=>refreshStudentEvents(c));
   updateTotals();
+  saveToLocalStorage();
 }
 
 function updateTotals(){totalStudentsEl.textContent=$$('.student-card').length;}
-function recomputeEventCountsFromDOM(){Object.keys(perEventCount).forEach(k=>perEventCount[k]=0);$$('.student-card').forEach(card=>{$$('input[type="checkbox"][data-ev]',card).forEach(chk=>{if(chk.checked) perEventCount[chk.dataset.ev]++;});});}
+
+// ============================
+// Categoria e idade
+// ============================
+const CATEGORY_AGE={
+'Mirim':[2012,2015],
+'Infantil':[2010,2012],
+'Infanto':[2008,2010]
+};
+
+function computeCategoryOptions(dob){
+  if(!dob) return [];
+  const year=new Date(dob).getFullYear();
+  return Object.entries(CATEGORY_AGE).filter(([cat,[min,max]])=>year>=min && year<=max).map(([cat])=>cat);
+}
 
 function refreshStudentEvents(card){
+  const catSel=$('.sel-category',card);
   const dob=$('.inp-dob',card).value;
   const gender=$('.sel-gender',card).value;
-  const cat=$('.sel-category',card).value;
-  const indWrap=$('.ind-events',card); const relayWrap=$('.relay-events',card);
-  indWrap.innerHTML=''; relayWrap.innerHTML='';
-  const indCountEl=$('.ind-count',card); const relayLabelEl=$('.relay-label',card);
-  function makeEventCheckbox(ev,group){
-    const taken=perEventCount[ev.id]||0;
+
+  const validCats=computeCategoryOptions(dob);
+  catSel.innerHTML='<option value="">Selecione…</option>';
+  validCats.forEach(c=>{catSel.innerHTML+=`<option value="${c}">${c}</option>`;});
+  if(!validCats.includes(catSel.value)) catSel.value='';
+
+  // Resumo
+  const indCountEl=$('.ind-count',card);
+  const relayLabelEl=$('.relay-label',card);
+
+  // Render provas individuais
+  const indWrap=$('.ind-events',card);
+  indWrap.innerHTML='';
+  EVENTS.individual.forEach(ev=>{
+    if(!catSel.value || !ev.categories.includes(catSel.value)) return;
+    const taken=perEventGenderCount[ev.id][gender]||0;
     const remaining=Math.max(0,2-taken);
-    const box=document.createElement('label'); box.className='event';
+    const box=document.createElement('label');
+    box.className='event';
     box.innerHTML=`<span style="display:flex;align-items:center;gap:10px;">
-      <input type="checkbox" data-ev="${ev.id}" />
-      <span><b>${ev.label}</b><br><span class="small">Restantes na escola: <b>${remaining}</b> / 2</span></span>
+      <input type="checkbox" data-ev="${ev.id}"><span><b>${ev.label}</b><br><span class="small">Restantes no gênero: <b>${remaining}</b>/2</span></span>
       </span><span class="badge ${remaining>0?'ok':'error'}">${remaining>0?'Disponível':'Lotada'}</span>`;
     const chk=$('input',box);
-    let allowedCategory=!!cat && ev.categories.includes(cat);
-    let allowedGender=!!gender && ev.genders.includes(gender);
-    if(!allowedCategory||!allowedGender||remaining<=0) {chk.disabled=true; box.classList.add('disabled');}
-    chk.addEventListener('change',()=>{
-      if(chk.checked && group==='ind' && selectedIndCount(card)>2){chk.checked=false; toast('Cada aluno pode escolher no máximo 2 provas individuais.'); return;}
-      perEventCount[ev.id]=chk.checked?perEventCount[ev.id]+1:Math.max(0,perEventCount[ev.id]-1);
+    if(remaining<=0) {chk.disabled=true; box.classList.add('disabled');}
+    chk.addEventListener('click',(e)=>{
+      if(chk.checked){ // marcar
+        if(perEventGenderCount[ev.id][gender]>=2){chk.checked=false; return;}
+        perEventGenderCount[ev.id][gender]++;
+      } else {perEventGenderCount[ev.id][gender]=Math.max(0,perEventGenderCount[ev.id][gender]-1);}
       $$('.student-card').forEach(c=>refreshStudentEvents(c));
       updateIndAndRelaySummary(card);
       saveToLocalStorage();
+      e.stopPropagation();
     });
-    return box;
-  }
-  EVENTS.individual.forEach(ev=>indWrap.appendChild(makeEventCheckbox(ev,'ind')));
+    indWrap.appendChild(box);
+  });
+
+  // Render revezamento
+  const relayWrap=$('.relay-events',card);
+  relayWrap.innerHTML='';
   EVENTS.relay.forEach(ev=>{
-    const item=makeEventCheckbox(ev,'relay');
-    const chk=$('input',item);
-    chk.addEventListener('change',()=>{
-      if(chk.checked) $$('input[type="checkbox"][data-ev]',relayWrap).forEach(other=>{if(other!==chk && other.checked){other.checked=false; perEventCount[other.dataset.ev]=Math.max(0,perEventCount[other.dataset.ev]-1);}});
-      updateIndAndRelaySummary(card);
-      saveToLocalStorage();
-    });
-    relayWrap.appendChild(item);
-  });
-  $$('input[type="checkbox"][data-ev]',card).forEach(chk=>{
-    const evId=chk.dataset.ev;
-    const ev=[...EVENTS.individual,...EVENTS.relay].find(e=>e.id===evId);
-    if(cat && !ev.categories.includes(cat)) {chk.checked=false; perEventCount[evId]=Math.max(0,perEventCount[evId]-1);}
-    if(gender && !ev.genders.includes(gender)) {chk.checked=false; perEventCount[evId]=Math.max(0,perEventCount[evId]-1);}
-  });
-  updateIndAndRelaySummary(card);
-}
-
-function selectedIndCount(card){return $$('input[type="checkbox"][data-ev]',card).filter(x=>EVENTS.individual.some(e=>e.id===x.dataset.ev)&&x.checked).length;}
-function updateIndAndRelaySummary(card){
-  $('.ind-count',card).textContent=selectedIndCount(card);
-  const relayChecked=$$('.relay-events input[type="checkbox"]:checked',card).length;
-  $('.relay-label',card).textContent=relayChecked>0?'Selecionado':'—';
-}
-
-function toast(msg){alert(msg);}
-
-$('#addStudentBtn').addEventListener('click',addStudent);
-
-function collectData(){
-  const school=$('#school').value;
-  const teacher=$('#teacher').value;
-  const email=$('#email').value;
-  const phone=$('#phone').value;
-  const students=[];
-  let valid=true;
-  $$('div.student-card').forEach(card=>{
-    const name=$('.inp-name',card).value.trim();
-    const dob=$('.inp-dob',card).value;
-    const doc=$('.inp-doc',card).value.trim();
-    const gender=$('.sel-gender',card).value;
-    const cat=$('.sel-category',card).value;
-    if(!name||!dob||!doc||!gender||!cat) {valid=false;}
-    const ind=$$('input[type="checkbox"]:checked',card).filter(x=>EVENTS.individual.some(e=>e.id===x.dataset.ev)).map(x=>x.dataset.ev);
-    const relay=$$('input[type="checkbox"]:checked',card).filter(x=>EVENTS.relay.some(e=>e.id===x.dataset.ev)).map(x=>x.dataset.ev);
-    students.push({name,dob,doc,gender,category:cat,individual:ind,relay:relay});
-  });
-  if(!valid){toast('Preencha todos os campos obrigatórios.'); return null;}
-  return {school,teacher,email,phone,students};
-}
-
-$('#previewBtn').addEventListener('click',()=>{console.log(JSON.stringify(collectData(),null,2)); alert('Confira o console para visualizar JSON.');});
-$('#submitBtn').addEventListener('click',()=>{const data=collectData(); if(!data)return; submitToSheet(data);});
-
-function saveToLocalStorage(){localStorage.setItem('schoolFormData',JSON.stringify(collectData()));}
-function loadFromLocalStorage(){const saved=localStorage.getItem('schoolFormData'); if(!saved)return; const obj=JSON.parse(saved); $('#school').value=obj.school||''; $('#teacher').value=obj.teacher||''; $('#email').value=obj.email||''; $('#phone').value=obj.phone||''; if(obj.students) obj.students.forEach(s=>{addStudent(); const last=$$('.student-card').slice(-1)[0]; $('.inp-name',last).value=s.name; $('.inp-dob',last).value=s.dob; $('.inp-doc',last).value=s.doc; $('.sel-gender',last).value=s.gender; $('.sel-category',last).value=s.category; refreshStudentEvents(last); $$('input[type="checkbox"]',last).forEach(chk=>{if(s.individual.includes(chk.dataset.ev)||s.relay.includes(chk.dataset.ev)) chk.checked=true;}); updateIndAndRelaySummary(last); }); }
-window.addEventListener('load',loadFromLocalStorage);
-
-function submitToSheet(data){
-  fetch('https://script.google.com/macros/s/AKfycbxy-MnPU9PoIYsTkVp5Avvb8RcUSgAJMzTSgJ_kxBGG380XGE-ZVEQyOBrBqBVYUCEkRw/exec', {method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}})
-  .then(res=>res.text()).then(r=>{alert('Inscrição enviada com sucesso!'); localStorage.removeItem('schoolFormData');})
-  .catch(err=>{console.error(err); toast('Erro ao enviar inscrição.');});
-}
-</script>
+    if(!catSel.value || !ev.categories.includes(catSel.value)) return;
+    const taken=perEventGenderCount[ev.id][gender]||0;
+    const remaining=Math.max(0,4-taken);
+    const box=document.createElement('label');
+    box.className='event';
+    box.innerHTML=`<span style="display:flex;align-items:center;gap:10px;">
+      <input type="checkbox" data-ev="${ev.id}"><span
