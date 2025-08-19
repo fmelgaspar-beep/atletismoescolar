@@ -6,54 +6,47 @@
 <title>Inscrição – Jogos Escolares (Atletismo Convencional)</title>
 <style>
   :root {
-    --bg: #0f172a;
-    --panel: #111827ee;
-    --muted: #94a3b8;
-    --text: #e5e7eb;
-    --accent: #22d3ee;
-    --accent-2: #a78bfa;
-    --ok: #34d399;
-    --warn: #f59e0b;
-    --error: #fb7185;
+    --bg: #0f172a; --panel: #111827ee; --muted: #94a3b8; --text: #e5e7eb;
+    --accent: #22d3ee; --accent-2: #a78bfa; --ok: #34d399; --warn: #f59e0b; --error: #fb7185;
     --border: #1f2937;
   }
   * { box-sizing: border-box; }
-  body { margin:0; background: radial-gradient(1200px 800px at 10% -10%, #0b1022 0%, #080c1a 25%, var(--bg) 60%); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial; line-height: 1.45;}
-  .container { max-width: 1100px; margin: 24px auto; padding:16px;}
-  .card { background: linear-gradient(180deg, #0b1224, #0a0f1e); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px #0005; padding:20px; margin-bottom:16px;}
+  body { margin:0; background: radial-gradient(1200px 800px at 10% -10%, #0b1022 0%, #080c1a 25%, var(--bg) 60%); color: var(--text); font-family: system-ui, sans-serif; line-height:1.45; }
+  .container { max-width:1100px; margin:24px auto; padding:16px; }
+  .card { background: linear-gradient(180deg,#0b1224,#0a0f1e); border:1px solid var(--border); border-radius:16px; box-shadow:0 10px 30px #0005; padding:20px; margin-bottom:16px; }
   h1,h2,h3{margin:0 0 12px;}
-  h1{font-size:1.6rem; letter-spacing:.2px;}
-  h2{font-size:1.2rem; color: var(--accent);}
-  label{display:block;margin:8px 0 6px;color:var(--muted); font-size:.95rem;}
-  input[type="text"], input[type="date"], input[type="email"], select{width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:#0b1020; color:var(--text);}
-  .row{display:grid; grid-template-columns:repeat(12,1fr); gap:12px;}
+  h1{font-size:1.6rem;letter-spacing:.2px;}
+  h2{font-size:1.2rem;color:var(--accent);}
+  label{display:block;margin:8px 0 6px;color:var(--muted);font-size:.95rem;}
+  input[type="text"], input[type="date"], input[type="email"], input[type="tel"], select { width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0b1020;color:var(--text); }
+  .row { display:grid; grid-template-columns:repeat(12,1fr); gap:12px; }
   .col-6{grid-column:span 6;}
   .col-4{grid-column:span 4;}
   .col-3{grid-column:span 3;}
   .col-12{grid-column:span 12;}
-  .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid var(--border); background:#0b1020;}
-  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; border:1px solid var(--border); background:#0b1328; color:var(--text); cursor:pointer;}
-  .btn:hover{filter:brightness(1.05);}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#0b1020;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:#0b1328;color:var(--text);cursor:pointer;}
+  .btn:hover{filter: brightness(1.05);}
   .btn-primary{background: linear-gradient(90deg,#0ea5e9,#22d3ee); border:none; color:#021015; font-weight:700;}
   .btn-danger{background: linear-gradient(90deg,#f43f5e,#fb7185); border:none; color:#160709; font-weight:700;}
-  .muted{color:var(--muted); font-size:.92rem;}
-  .divider{height:1px; background: linear-gradient(90deg, transparent, #1f2937, transparent); margin:14px 0;}
-  .grid-events{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;}
-  .event{border:1px solid var(--border); border-radius:12px; padding:10px; background:#0b1020; display:flex; justify-content:space-between; align-items:center; gap:10px;}
-  .event.disabled{opacity:.45; filter: grayscale(0.2);}
-  .badge{padding:2px 8px; border-radius:999px; font-size:.8rem; border:1px solid var(--border);}
-  .badge.ok{background:#05281c; color:var(--ok); border-color:#064e3b;}
-  .badge.warn{background:#2a1d05; color:var(--warn); border-color:#7c4a03;}
-  .badge.error{background:#2a0a0e; color:var(--error); border-color:#7f1d1d;}
-  details{border:1px solid var(--border); border-radius:12px; padding:12px; background:#0b1020;}
-  summary{cursor:pointer; color: var(--accent-2); font-weight:600;}
-  .sticky-footer{position:sticky; bottom:0; background: linear-gradient(180deg,#0a0f1e,#0b1224); border-top:1px solid var(--border); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; gap:12px; border-radius:14px;}
-  .help{font-size:.9rem; color:var(--muted);}
-  .small{font-size:.85rem; color:var(--muted);}
-  .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#0b1328; border:1px solid var(--border); font-size:.85rem;}
+  .muted{color:var(--muted);font-size:.92rem;}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,#1f2937,transparent);margin:14px 0;}
+  .grid-events{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+  .event{border:1px solid var(--border);border-radius:12px;padding:10px;background:#0b1020;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .event.disabled{opacity:.45;filter:grayscale(0.2);}
+  .badge{padding:2px 8px;border-radius:999px;font-size:.8rem;border:1px solid var(--border);}
+  .badge.ok{background:#05281c;color:var(--ok);border-color:#064e3b;}
+  .badge.warn{background:#2a1d05;color:var(--warn);border-color:#7c4a03;}
+  .badge.error{background:#2a0a0e;color:var(--error);border-color:#7f1d1d;}
+  details{border:1px solid var(--border);border-radius:12px;padding:12px;background:#0b1020;}
+  summary{cursor:pointer;color: var(--accent-2); font-weight:600;}
+  .sticky-footer{position:sticky;bottom:0;background:linear-gradient(180deg,#0a0f1e,#0b1224);border-top:1px solid var(--border);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-radius:14px;}
+  .help{font-size:.9rem;color:var(--muted);}
+  .small{font-size:.85rem;color:var(--muted);}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#0b1328;border:1px solid var(--border);font-size:.85rem;}
   .student-card{position: relative;}
-  .student-header{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px;}
-  .counter{display:flex; gap:8px; flex-wrap:wrap;}
+  .student-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;}
+  .counter{display:flex;gap:8px;flex-wrap:wrap;}
   .hidden{display:none !important;}
   @media (max-width:840px){
     .grid-events{grid-template-columns:1fr;}
@@ -66,13 +59,7 @@
 <div class="container">
   <div class="card">
     <h1>Inscrição – Atletismo Convencional • Jogos Escolares de Gaspar</h1>
-    <p class="muted">Cada escola pode inscrever <b>até 2 alunos por prova</b>. Cada aluno pode participar de <b>até 2 provas individuais</b> + <b>1 revezamento</b>.</p>
-  </div>
-
-  <!-- Referência de Provas -->
-  <div class="card">
-    <h2>Provas da Competição (referência)</h2>
-    <div class="grid-events" id="eventsReference"></div>
+    <p class="muted">Cada escola pode inscrever até 2 alunos por prova. Cada aluno pode participar de até 2 provas individuais + 1 revezamento.</p>
   </div>
 
   <!-- Identificação da Unidade de Ensino -->
@@ -89,11 +76,11 @@
       </div>
       <div class="col-6">
         <label for="email">Email de Contato</label>
-        <input id="email" type="email" required placeholder="exemplo@escola.com" />
+        <input id="email" type="email" placeholder="ex.: contato@escola.com" />
       </div>
       <div class="col-6">
         <label for="phone">Telefone</label>
-        <input id="phone" type="text" required placeholder="(99) 99999-9999" />
+        <input id="phone" type="tel" placeholder="(XX) XXXXX-XXXX" />
       </div>
     </div>
   </div>
@@ -104,7 +91,6 @@
       <h2>2) Inscrição de Alunos</h2>
       <div class="counter">
         <span class="chip"><strong>Total de alunos:</strong> <span id="totalStudents">0</span></span>
-        <span class="chip"><strong>Vagas por prova restantes</strong>: <span class="small">(mostrado ao lado de cada prova)</span></span>
       </div>
     </div>
     <div id="students"></div>
@@ -114,7 +100,7 @@
 
   <!-- Rodapé com ações -->
   <div class="card sticky-footer">
-    <div class="help">Validações ativas: <b>2 alunos por prova</b> (no envio) • <b>2 provas por aluno</b> • Revezamento por categoria • Seleção por idade e gênero.</div>
+    <div class="help">Validações ativas: 2 alunos por prova, 2 provas por aluno, categoria compatível com idade, gênero compatível.</div>
     <div style="display:flex; gap:8px;">
       <button class="btn" type="button" id="previewBtn">Pré-visualizar JSON</button>
       <button class="btn btn-primary" type="button" id="submitBtn">Enviar inscrições</button>
@@ -122,7 +108,6 @@
   </div>
 </div>
 
-<!-- Template de aluno -->
 <template id="studentTemplate">
 <div class="card student-card" data-student-id="">
   <div class="student-header">
@@ -142,33 +127,31 @@
       <label>CPF/RG</label>
       <input type="text" class="inp-doc" required placeholder="Somente números / RG" />
     </div>
-    <div class="col-4">
-      <label>Categoria</label>
-      <select class="sel-category" required>
-        <option value="">Selecione…</option>
-        <option>Mirim</option>
-        <option>Infantil</option>
-        <option>Infanto</option>
-      </select>
-    </div>
-    <div class="col-4">
+    <div class="col-3">
       <label>Gênero</label>
       <select class="sel-gender" required>
         <option value="">Selecione…</option>
-        <option>Masculino</option>
-        <option>Feminino</option>
+        <option value="M">Masculino</option>
+        <option value="F">Feminino</option>
       </select>
     </div>
-    <div class="col-4">
+    <div class="col-3">
+      <label>Categoria</label>
+      <select class="sel-category" required>
+        <option value="">Selecione…</option>
+        <option value="Mirim">Mirim - 10 a 13 anos (2012 a 2015)</option>
+        <option value="Infantil">Infantil - 13 a 15 anos (2010 a 2012)</option>
+        <option value="Infanto">Infanto - 15 a 17 anos (2008 a 2010)</option>
+      </select>
+    </div>
+    <div class="col-6">
       <label>Resumo de seleção</label>
       <div class="pill"><span class="small">Provas individuais:</span> <b class="ind-count">0</b> / 2 &nbsp;•&nbsp; <span class="small">Revezamento:</span> <b class="relay-label">—</b></div>
     </div>
   </div>
-
   <div class="divider"></div>
   <h3>Provas Individuais (máx. 2)</h3>
   <div class="grid-events ind-events"></div>
-
   <div class="divider"></div>
   <h3>Revezamento (opcional)</h3>
   <div class="grid-events relay-events"></div>
@@ -178,220 +161,151 @@
 <script>
 const EVENTS = {
   individual: [
-    { id:'75m', label:'75 m', categories:['Mirim','Infantil','Infanto'], genders:['Masculino','Feminino'] },
-    { id:'200m', label:'200 m', categories:['Mirim','Infantil','Infanto'], genders:['Masculino','Feminino'] },
-    { id:'400m', label:'400 m', categories:['Mirim','Infantil','Infanto'], genders:['Masculino','Feminino'] },
-    { id:'600m', label:'600 m', categories:['Infantil'], genders:['Masculino','Feminino'] },
-    { id:'800m', label:'800 m', categories:['Infanto'], genders:['Masculino','Feminino'] },
-    { id:'peso', label:'Arremesso de Peso', categories:['Mirim','Infantil','Infanto'], genders:['Masculino','Feminino'] },
-    { id:'altura', label:'Salto em Altura', categories:['Mirim','Infantil','Infanto'], genders:['Masculino','Feminino'] },
-    { id:'distancia', label:'Salto em Distância', categories:['Mirim','Infantil','Infanto'], genders:['Masculino','Feminino'] },
+    {id:'75m',label:'75 m',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
+    {id:'200m',label:'200 m',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
+    {id:'400m',label:'400 m',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
+    {id:'600m',label:'600 m',categories:['Infantil'],genders:['M','F']},
+    {id:'800m',label:'800 m',categories:['Infanto'],genders:['M','F']},
+    {id:'peso',label:'Arremesso de Peso',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
+    {id:'altura',label:'Salto em Altura',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
+    {id:'distancia',label:'Salto em Distância',categories:['Mirim','Infantil','Infanto'],genders:['M','F']},
   ],
   relay:[
-    {id:'4x50', label:'Revezamento 4x50 m', categories:['Mirim'], genders:['Masculino','Feminino']},
-    {id:'4x100', label:'Revezamento 4x100 m', categories:['Infantil','Infanto'], genders:['Masculino','Feminino']}
+    {id:'4x50',label:'Revezamento 4x50 m',categories:['Mirim'],genders:['M','F']},
+    {id:'4x100',label:'Revezamento 4x100 m',categories:['Infantil','Infanto'],genders:['M','F']}
   ]
 };
 
-const studentsWrap = document.getElementById('students');
-const studentTpl = document.getElementById('studentTemplate');
-const totalStudentsEl = document.getElementById('totalStudents');
-const eventsReference = document.getElementById('eventsReference');
-
-let studentSeq = 0;
-const perEventCount = {};
+const perEventCount={};
 [...EVENTS.individual,...EVENTS.relay].forEach(e=>perEventCount[e.id]=0);
 
-function $ (sel,root=document){return root.querySelector(sel);}
-function $$ (sel,root=document){return Array.from(root.querySelectorAll(sel));}
+const $=(sel,root=document)=>root.querySelector(sel);
+const $$=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
 
-function renderEventsReference(){
-  eventsReference.innerHTML='';
-  [...EVENTS.individual,...EVENTS.relay].forEach(ev=>{
-    const div=document.createElement('div');
-    div.className='event';
-    div.innerHTML=`<div><b>${ev.label}</b></div><div class="small">Categorias: ${ev.categories.join(', ')} | Gênero: ${ev.genders.join('/')}</div>`;
-    eventsReference.appendChild(div);
-  });
-}
+const studentsWrap=$('#students');
+const studentTpl=$('#studentTemplate');
+const totalStudentsEl=$('#totalStudents');
 
-function isCategoryValid(dob, category){
-  if(!dob||!category) return false;
-  const birthYear = new Date(dob).getFullYear();
-  switch(category){
-    case 'Mirim': return birthYear>=2012 && birthYear<=2015;
-    case 'Infantil': return birthYear>=2010 && birthYear<=2012;
-    case 'Infanto': return birthYear>=2008 && birthYear<=2010;
-    default: return false;
-  }
-}
+let studentSeq=0;
 
 function addStudent(){
   const node=studentTpl.content.firstElementChild.cloneNode(true);
   const studentId=`s${++studentSeq}`;
   node.dataset.studentId=studentId;
   $('.student-number',node).textContent=studentSeq;
-
   $('.btnRemove',node).addEventListener('click',()=>removeStudent(node));
-  const categorySel=$('.sel-category',node);
-  const dobInp=$('.inp-dob',node);
-  const genderSel=$('.sel-gender',node);
-
-  function updateEvents(){
-    const category=categorySel.value;
-    const dob=dobInp.value;
-    const gender=genderSel.value;
-    const indWrap=$('.ind-events',node);
-    const relayWrap=$('.relay-events',node);
-    indWrap.innerHTML='';
-    relayWrap.innerHTML='';
-
-    function createCheckbox(ev){
-      const div=document.createElement('div');
-      div.className='event';
-      const chk=document.createElement('input');
-      chk.type='checkbox';
-      chk.dataset.ev=ev.id;
-      div.appendChild(chk);
-      const lbl=document.createElement('span');
-      lbl.textContent=ev.label;
-      div.appendChild(lbl);
-
-      if(!category || !gender || !ev.categories.includes(category) || !ev.genders.includes(gender)){
-        chk.disabled=true;
-        div.classList.add('disabled');
-      }
-
-      chk.addEventListener('change',()=>{
-        const selected = $$('input[type="checkbox"]',div.parentNode).filter(x=>x.checked).map(x=>x.dataset.ev);
-        if(chk.checked && selected.filter(id=>id===chk.dataset.ev).length>1){
-          chk.checked=false;
-          alert('O aluno só pode ser inscrito uma vez em cada prova.');
-          return;
-        }
-        refreshStudentEvents(node);
-      });
-      return div;
-    }
-
-    EVENTS.individual.forEach(ev=>indWrap.appendChild(createCheckbox(ev)));
-    EVENTS.relay.forEach(ev=>relayWrap.appendChild(createCheckbox(ev)));
-
-    refreshStudentEvents(node);
-  }
-
-  dobInp.addEventListener('change',()=>{
-    if(categorySel.value && !isCategoryValid(dobInp.value,categorySel.value)){
-      alert('Categoria incompatível com a idade do aluno.');
-      categorySel.value='';
-      updateEvents();
-    }
-  });
-
-  categorySel.addEventListener('change',()=>{
-    if(dobInp.value && !isCategoryValid(dobInp.value,categorySel.value)){
-      alert('Categoria incompatível com a idade do aluno.');
-      categorySel.value='';
-      updateEvents();
-    } else {
-      updateEvents();
-    }
-  });
-
-  genderSel.addEventListener('change',updateEvents);
-
+  $('.sel-category',node).addEventListener('change',()=>refreshStudentEvents(node));
+  $('.inp-dob',node).addEventListener('change',()=>refreshStudentEvents(node));
+  $('.sel-gender',node).addEventListener('change',()=>refreshStudentEvents(node));
+  refreshStudentEvents(node);
   studentsWrap.appendChild(node);
-  totalStudentsEl.textContent=studentsWrap.children.length;
+  updateTotals();
 }
 
 function removeStudent(card){
+  $$('input[type="checkbox"][data-ev]',card).forEach(chk=>{
+    if(chk.checked) perEventCount[chk.dataset.ev]=Math.max(0,(perEventCount[chk.dataset.ev]||0)-1);
+  });
   card.remove();
-  totalStudentsEl.textContent=studentsWrap.children.length;
+  recomputeEventCountsFromDOM();
+  $$('.student-card').forEach(c=>refreshStudentEvents(c));
+  updateTotals();
 }
+
+function updateTotals(){totalStudentsEl.textContent=$$('.student-card').length;}
+function recomputeEventCountsFromDOM(){Object.keys(perEventCount).forEach(k=>perEventCount[k]=0);$$('.student-card').forEach(card=>{$$('input[type="checkbox"][data-ev]',card).forEach(chk=>{if(chk.checked) perEventCount[chk.dataset.ev]++;});});}
 
 function refreshStudentEvents(card){
-  const indCount=$$('.ind-events input:checked',card).length;
-  $('.ind-count',card).textContent=indCount;
-  const relaySel=$$('.relay-events input:checked',card);
-  $('.relay-label',card).textContent=relaySel.length? relaySel.map(x=>x.dataset.ev).join(', ') : '—';
+  const dob=$('.inp-dob',card).value;
+  const gender=$('.sel-gender',card).value;
+  const cat=$('.sel-category',card).value;
+  const indWrap=$('.ind-events',card); const relayWrap=$('.relay-events',card);
+  indWrap.innerHTML=''; relayWrap.innerHTML='';
+  const indCountEl=$('.ind-count',card); const relayLabelEl=$('.relay-label',card);
+  function makeEventCheckbox(ev,group){
+    const taken=perEventCount[ev.id]||0;
+    const remaining=Math.max(0,2-taken);
+    const box=document.createElement('label'); box.className='event';
+    box.innerHTML=`<span style="display:flex;align-items:center;gap:10px;">
+      <input type="checkbox" data-ev="${ev.id}" />
+      <span><b>${ev.label}</b><br><span class="small">Restantes na escola: <b>${remaining}</b> / 2</span></span>
+      </span><span class="badge ${remaining>0?'ok':'error'}">${remaining>0?'Disponível':'Lotada'}</span>`;
+    const chk=$('input',box);
+    let allowedCategory=!!cat && ev.categories.includes(cat);
+    let allowedGender=!!gender && ev.genders.includes(gender);
+    if(!allowedCategory||!allowedGender||remaining<=0) {chk.disabled=true; box.classList.add('disabled');}
+    chk.addEventListener('change',()=>{
+      if(chk.checked && group==='ind' && selectedIndCount(card)>2){chk.checked=false; toast('Cada aluno pode escolher no máximo 2 provas individuais.'); return;}
+      perEventCount[ev.id]=chk.checked?perEventCount[ev.id]+1:Math.max(0,perEventCount[ev.id]-1);
+      $$('.student-card').forEach(c=>refreshStudentEvents(c));
+      updateIndAndRelaySummary(card);
+      saveToLocalStorage();
+    });
+    return box;
+  }
+  EVENTS.individual.forEach(ev=>indWrap.appendChild(makeEventCheckbox(ev,'ind')));
+  EVENTS.relay.forEach(ev=>{
+    const item=makeEventCheckbox(ev,'relay');
+    const chk=$('input',item);
+    chk.addEventListener('change',()=>{
+      if(chk.checked) $$('input[type="checkbox"][data-ev]',relayWrap).forEach(other=>{if(other!==chk && other.checked){other.checked=false; perEventCount[other.dataset.ev]=Math.max(0,perEventCount[other.dataset.ev]-1);}});
+      updateIndAndRelaySummary(card);
+      saveToLocalStorage();
+    });
+    relayWrap.appendChild(item);
+  });
+  $$('input[type="checkbox"][data-ev]',card).forEach(chk=>{
+    const evId=chk.dataset.ev;
+    const ev=[...EVENTS.individual,...EVENTS.relay].find(e=>e.id===evId);
+    if(cat && !ev.categories.includes(cat)) {chk.checked=false; perEventCount[evId]=Math.max(0,perEventCount[evId]-1);}
+    if(gender && !ev.genders.includes(gender)) {chk.checked=false; perEventCount[evId]=Math.max(0,perEventCount[evId]-1);}
+  });
+  updateIndAndRelaySummary(card);
 }
 
-// Inicializa referência de provas
-renderEventsReference();
+function selectedIndCount(card){return $$('input[type="checkbox"][data-ev]',card).filter(x=>EVENTS.individual.some(e=>e.id===x.dataset.ev)&&x.checked).length;}
+function updateIndAndRelaySummary(card){
+  $('.ind-count',card).textContent=selectedIndCount(card);
+  const relayChecked=$$('.relay-events input[type="checkbox"]:checked',card).length;
+  $('.relay-label',card).textContent=relayChecked>0?'Selecionado':'—';
+}
 
-document.getElementById('addStudentBtn').addEventListener('click',addStudent);
-document.getElementById('previewBtn').addEventListener('click',()=>{
-  const data={
-    unit: $('#school').value,
-    teacher: $('#teacher').value,
-    email: $('#email').value,
-    phone: $('#phone').value,
-    students:[]
-  };
-  $$('.student-card').forEach(card=>{
-    const s={
-      name: $('.inp-name',card).value,
-      dob: $('.inp-dob',card).value,
-      doc: $('.inp-doc',card).value,
-      category: $('.sel-category',card).value,
-      gender: $('.sel-gender',card).value,
-      individual: $$('input[type="checkbox"]:checked','.ind-events',card).map(c=>c.dataset.ev),
-      relay: $$('input[type="checkbox"]:checked','.relay-events',card).map(c=>c.dataset.ev)
-    };
-    data.students.push(s);
+function toast(msg){alert(msg);}
+
+$('#addStudentBtn').addEventListener('click',addStudent);
+
+function collectData(){
+  const school=$('#school').value;
+  const teacher=$('#teacher').value;
+  const email=$('#email').value;
+  const phone=$('#phone').value;
+  const students=[];
+  let valid=true;
+  $$('div.student-card').forEach(card=>{
+    const name=$('.inp-name',card).value.trim();
+    const dob=$('.inp-dob',card).value;
+    const doc=$('.inp-doc',card).value.trim();
+    const gender=$('.sel-gender',card).value;
+    const cat=$('.sel-category',card).value;
+    if(!name||!dob||!doc||!gender||!cat) {valid=false;}
+    const ind=$$('input[type="checkbox"]:checked',card).filter(x=>EVENTS.individual.some(e=>e.id===x.dataset.ev)).map(x=>x.dataset.ev);
+    const relay=$$('input[type="checkbox"]:checked',card).filter(x=>EVENTS.relay.some(e=>e.id===x.dataset.ev)).map(x=>x.dataset.ev);
+    students.push({name,dob,doc,gender,category:cat,individual:ind,relay:relay});
   });
-  alert(JSON.stringify(data,null,2));
-});
+  if(!valid){toast('Preencha todos os campos obrigatórios.'); return null;}
+  return {school,teacher,email,phone,students};
+}
 
-// Salvamento automático a cada 10 segundos
-setInterval(()=>{
-  const data={
-    unit: $('#school').value,
-    teacher: $('#teacher').value,
-    email: $('#email').value,
-    phone: $('#phone').value,
-    students:[]
-  };
-  $$('.student-card').forEach(card=>{
-    const s={
-      name: $('.inp-name',card).value,
-      dob: $('.inp-dob',card).value,
-      doc: $('.inp-doc',card).value,
-      category: $('.sel-category',card).value,
-      gender: $('.sel-gender',card).value,
-      individual: $$('input[type="checkbox"]:checked','.ind-events',card).map(c=>c.dataset.ev),
-      relay: $$('input[type="checkbox"]:checked','.relay-events',card).map(c=>c.dataset.ev)
-    };
-    data.students.push(s);
-  });
-  localStorage.setItem('inscricoesData',JSON.stringify(data));
-},10000);
+$('#previewBtn').addEventListener('click',()=>{console.log(JSON.stringify(collectData(),null,2)); alert('Confira o console para visualizar JSON.');});
+$('#submitBtn').addEventListener('click',()=>{const data=collectData(); if(!data)return; submitToSheet(data);});
 
-// Carrega dados salvos
-window.addEventListener('load',()=>{
-  const saved=localStorage.getItem('inscricoesData');
-  if(saved){
-    const data=JSON.parse(saved);
-    $('#school').value=data.unit||'';
-    $('#teacher').value=data.teacher||'';
-    $('#email').value=data.email||'';
-    $('#phone').value=data.phone||'';
-    if(data.students && data.students.length){
-      data.students.forEach(s=>{
-        addStudent();
-        const card=studentsWrap.lastElementChild;
-        $('.inp-name',card).value=s.name;
-        $('.inp-dob',card).value=s.dob;
-        $('.inp-doc',card).value=s.doc;
-        $('.sel-category',card).value=s.category;
-        $('.sel-gender',card).value=s.gender;
-        refreshStudentEvents(card);
-        s.individual?.forEach(evId=>{const chk=$(`input[data-ev="${evId}"]`,$('.ind-events',card)); if(chk) chk.checked=true;});
-        s.relay?.forEach(evId=>{const chk=$(`input[data-ev="${evId}"]`,$('.relay-events',card)); if(chk) chk.checked=true;});
-      });
-    }
-  }
-});
+function saveToLocalStorage(){localStorage.setItem('schoolFormData',JSON.stringify(collectData()));}
+function loadFromLocalStorage(){const saved=localStorage.getItem('schoolFormData'); if(!saved)return; const obj=JSON.parse(saved); $('#school').value=obj.school||''; $('#teacher').value=obj.teacher||''; $('#email').value=obj.email||''; $('#phone').value=obj.phone||''; if(obj.students) obj.students.forEach(s=>{addStudent(); const last=$$('.student-card').slice(-1)[0]; $('.inp-name',last).value=s.name; $('.inp-dob',last).value=s.dob; $('.inp-doc',last).value=s.doc; $('.sel-gender',last).value=s.gender; $('.sel-category',last).value=s.category; refreshStudentEvents(last); $$('input[type="checkbox"]',last).forEach(chk=>{if(s.individual.includes(chk.dataset.ev)||s.relay.includes(chk.dataset.ev)) chk.checked=true;}); updateIndAndRelaySummary(last); }); }
+window.addEventListener('load',loadFromLocalStorage);
+
+function submitToSheet(data){
+  fetch('https://script.google.com/macros/s/AKfycbxy-MnPU9PoIYsTkVp5Avvb8RcUSgAJMzTSgJ_kxBGG380XGE-ZVEQyOBrBqBVYUCEkRw/exec', {method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}})
+  .then(res=>res.text()).then(r=>{alert('Inscrição enviada com sucesso!'); localStorage.removeItem('schoolFormData');})
+  .catch(err=>{console.error(err); toast('Erro ao enviar inscrição.');});
+}
 </script>
-</body>
-</html>
