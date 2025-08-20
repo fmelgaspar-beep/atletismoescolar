@@ -107,7 +107,8 @@
   </template>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwe9Gpt4gDZu6BhsE5o4NPHikA4Y5yQCAbuX_p90e5woe3nkDDdWgUkod2gzrZ1th29dA/exec";
+    const WEBAPP_URL =
+  "https://script.google.com/macros/s/AKfycbwe9Gpt4gDZu6BhsE5o4NPHikA4Y5yQCAbuX_p90e5woe3nkDDdWgUkod2gzrZ1th29dA/exec";
 
     const SCHOOLS = {
       "COLÉGIO MADRE FRANCISCA LAMPEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO"],
@@ -158,11 +159,11 @@
       const data = collectData();
       if (!data) return;
 
-      fetch(https://script.google.com/macros/s/AKfycbwe9Gpt4gDZu6BhsE5o4NPHikA4Y5yQCAbuX_p90e5woe3nkDDdWgUkod2gzrZ1th29dA/exec, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
+      fetch(WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
       .then(res => res.json())
       .then(res => {
         $("#reviewModal").style.display = "none";
