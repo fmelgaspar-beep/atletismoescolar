@@ -32,7 +32,6 @@
       </p>
     </div>
 
-    <!-- Identificação da Escola -->
     <div class="card">
       <h2>1) Identificação da Unidade de Ensino</h2>
       <div class="row">
@@ -55,20 +54,17 @@
       </div>
     </div>
 
-    <!-- Inscrição de Alunos -->
     <div class="card">
       <h2>2) Inscrição de Alunos</h2>
       <div id="students"></div>
       <button class="btn btn-primary" id="addStudentBtn" type="button">+ Adicionar aluno</button>
     </div>
 
-    <!-- Botão de Revisão -->
     <div class="card">
       <button class="btn btn-primary" id="reviewBtn" type="button">Revisar inscrição</button>
     </div>
   </div>
 
-  <!-- Modal de Revisão -->
   <div class="modal" id="reviewModal">
     <div class="modal-content">
       <h2>Revisão da Inscrição</h2>
@@ -80,7 +76,6 @@
     </div>
   </div>
 
-  <!-- Template de Aluno -->
   <template id="studentTemplate">
     <div class="card student">
       <div class="row">
@@ -141,14 +136,12 @@
     const studentTpl = $("#studentTemplate");
     const schoolSel   = $("#school");
 
-    // Preenche escolas
     Object.keys(SCHOOLS).forEach(name => {
       const o = document.createElement("option");
       o.value = name; o.textContent = name;
       schoolSel.appendChild(o);
     });
 
-    // Eventos
     $("#addStudentBtn").onclick = addStudent;
     $("#reviewBtn").onclick     = () => {
       const data = collectData();
@@ -182,7 +175,7 @@
       });
     };
 
-    // Função para adicionar aluno
+
     function addStudent() {
       const node = studentTpl.content.firstElementChild.cloneNode(true);
       $(".btnRemove", node).onclick = () => node.remove();
@@ -215,7 +208,6 @@
         revezamentos.forEach(r => selRelay.innerHTML += `<option>${r}</option>`);
       };
 
-      // Regras de duplicidade e limite por prova
       [selEvent1, selEvent2].forEach(current => {
         const other = current === selEvent1 ? selEvent2 : selEvent1;
         current.onchange = () => {
@@ -244,7 +236,6 @@
       $("#students").appendChild(node);
     }
 
-    // Coleta dados do formulário
     function collectData() {
       const school  = schoolSel.value;
       if (!school) { alert("Selecione a escola."); return null; }
@@ -278,7 +269,6 @@
       return { school, teacher, email, phone, students };
     }
 
-    // Exibe modal de revisão
     function showReview(data) {
       let html = `
         <p>
