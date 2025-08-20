@@ -1,119 +1,112 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Inscrição Jogos Escolares</title>
+  <meta charset="UTF-8" />
+  <title>Formulário de Inscrição</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    h2 { text-align: center; }
-    label { font-weight: bold; margin-top: 10px; display: block; }
-    input, select { width: 100%; padding: 8px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
-    .aluno { border: 1px solid #ddd; padding: 15px; margin-top: 15px; border-radius: 10px; background: #fafafa; position: relative; }
-    button { margin-top: 15px; padding: 10px 20px; border: none; border-radius: 8px; background: #4CAF50; color: white; cursor: pointer; }
-    button:hover { background: #45a049; }
-    .remover-btn { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
-    #resumo { background: #eef; padding: 15px; border-radius: 10px; margin-top: 20px; }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .aluno { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    select, input { margin: 5px 0; width: 100%; }
+    button { margin-top: 10px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Formulário de Inscrição</h2>
+  <h1>Formulário de Inscrição</h1>
 
-    <label>Unidade de Ensino:</label>
-    <select id="unidadeEnsino" onchange="resetarFormulario()" required>
-      <option value="">Selecione</option>
-    </select>
+  <label for="unidade">Unidade de Ensino:</label>
+  <select id="unidade" onchange="atualizarCategorias()">
+    <option value="">Selecione</option>
+    <option value="Escola A">Escola A</option>
+    <option value="Escola B">Escola B</option>
+  </select>
 
-    <label>Professor Responsável:</label>
-    <input type="text" id="professor" required>
-
-    <label>Email:</label>
-    <input type="email" id="email" required>
-
-    <label>Telefone:</label>
-    <input type="tel" id="telefone" required>
-
-    <div id="alunosContainer"></div>
-
-    <button type="button" onclick="adicionarAluno()">+ Adicionar Aluno</button>
-    <button type="button" onclick="mostrarResumo()">Mostrar Resumo</button>
-    <button type="button" onclick="enviarFormulario()">Enviar Inscrição</button>
-
-    <div id="resumo"></div>
-  </div>
+  <div id="alunos"></div>
+  <button onclick="adicionarAluno()">Adicionar Aluno</button>
+  <button onclick="enviarFormulario()">Enviar</button>
 
   <script>
-    const escolas = {
-      "COLÉGIO MADRE FRANCISCA LAMPEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO"],
-      "COLÉGIO UNI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB DOLORES L. S. KRAUSS": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB FERANDINO DAGNONI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB FREI GODOFREDO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB FREI POLICARPO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB HONÓRIO MIRANDA": ["INFANTIL MASCULINO","INFANTO MASCULINO"],
-      "EEB IVO D´ÁQUINO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB LUIZ FRANZÓI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB MARINA VIEIRA LEAL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB NORMA MÔNICA SABEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB PROF OLÍMPIO MORETTO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "IFSC - INSTITUTO FEDERAL DE SANTA CATARINA": ["INFANTO MASCULINO","INFANTO FEMININO"]
+    const categoriasPorUnidade = {
+      "Escola A": ["100m", "200m", "Revezamento"],
+      "Escola B": ["Salto", "Lançamento", "Revezamento"]
     };
 
-    const provasPorCategoria = {
-      "MIRIM": ["50m", "100m", "Salto em distância", "Arremesso de peso"],
-      "INFANTIL": ["100m", "200m", "400m", "Salto em altura", "Lançamento de dardo"],
-      "INFANTO": ["400m", "800m", "1500m", "Salto triplo", "Arremesso de disco"]
-    };
+    const limitePorProva = {};
+    const limiteRevezamento = { masculino: {}, feminino: {} };
 
-    const revezamentos = ["4x100m", "4x400m"];
-    let alunoCount = 0;
-
-    window.onload = () => {
-      const select = document.getElementById("unidadeEnsino");
-      Object.keys(escolas).forEach(nome => {
-        select.innerHTML += `<option value="${nome}">${nome}</option>`;
+    function atualizarCategorias() {
+      const unidade = document.getElementById("unidade").value;
+      document.querySelectorAll(".categoria").forEach(select => {
+        select.innerHTML = categoriasPorUnidade[unidade]
+          .map(cat => `<option value="${cat}">${cat}</option>`)
+          .join("");
       });
-    };
-
-    function resetarFormulario() {
-      alunoCount = 0;
-      document.getElementById("alunosContainer").innerHTML = "";
-      document.getElementById("resumo").innerHTML = "";
     }
 
     function adicionarAluno() {
-      alunoCount++;
+      const unidade = document.getElementById("unidade").value;
+      if (!unidade) return alert("Selecione a unidade de ensino primeiro.");
+
       const div = document.createElement("div");
-      div.classList.add("aluno");
+      div.className = "aluno";
       div.innerHTML = `
-        <h3>Aluno ${alunoCount}</h3>
-        <button type="button" class="remover-btn" onclick="removerAluno(this)">Remover</button>
-        <label>Nome:</label><input type="text" class="nome" required>
+        <label>Nome:</label><input type="text" class="nome" />
         <label>Gênero:</label>
-        <select class="genero" onchange="filtrarCategorias(this)" required>
-          <option value="">Selecione</option>
-          <option value="MASCULINO">Masculino</option>
-          <option value="FEMININO">Feminino</option>
+        <select class="genero" onchange="atualizarCategorias()">
+          <option value="masculino">Masculino</option>
+          <option value="feminino">Feminino</option>
         </select>
-        <label>Data de Nascimento:</label><input type="text" class="dataNascimento" placeholder="DD/MM/AAAA" required>
-        <label>Categoria:</label><select class="categoria" onchange="atualizarProvas(this)" required><option value="">Selecione</option></select>
-        <label>Prova 1:</label><select class="prova1"><option value="">Selecione</option></select>
-        <label>Prova 2:</label><select class="prova2"><option value="">Selecione</option></select>
+        <label>Prova 1:</label><select class="categoria prova1"></select>
+        <label>Prova 2:</label><select class="categoria prova2"></select>
         <label>Revezamento:</label>
-        <select class="revezamento"><option value="">Selecione</option>${revezamentos.map(p => `<option value="${p}">${p}</option>`).join("")}</select>
+        <select class="revezamento">
+          <option value="">Não</option>
+          <option value="Sim">Sim</option>
+        </select>
+        <button onclick="this.parentElement.remove()">Remover</button>
       `;
-      document.getElementById("alunosContainer").appendChild(div);
+      document.getElementById("alunos").appendChild(div);
+      atualizarCategorias();
     }
 
-    function removerAluno(btn) {
-      btn.closest(".aluno").remove();
+    function enviarFormulario() {
+      const unidade = document.getElementById("unidade").value;
+      const alunos = [...document.querySelectorAll(".aluno")];
+      const provasPorAluno = {};
+      const provasPorEscola = {};
+
+      for (const aluno of alunos) {
+        const nome = aluno.querySelector(".nome").value.trim();
+        const genero = aluno.querySelector(".genero").value;
+        const prova1 = aluno.querySelector(".prova1").value;
+        const prova2 = aluno.querySelector(".prova2").value;
+        const revezamento = aluno.querySelector(".revezamento").value;
+
+        if (!nome || !genero || !prova1) return alert("Preencha todos os campos obrigatórios.");
+
+        if (prova1 === prova2) return alert(`Aluno ${nome} não pode repetir a mesma prova.`);
+
+        const chave1 = `${unidade}-${prova1}-${genero}`;
+        const chave2 = `${unidade}-${prova2}-${genero}`;
+
+        provasPorEscola[chave1] = (provasPorEscola[chave1] || 0) + 1;
+        if (prova2) provasPorEscola[chave2] = (provasPorEscola[chave2] || 0) + 1;
+
+        if (provasPorEscola[chave1] > 2 || provasPorEscola[chave2] > 2) {
+          return alert(`Limite de 2 alunos por prova por gênero excedido em ${prova1} ou ${prova2}.`);
+        }
+
+        if (revezamento === "Sim") {
+          const chaveRev = `${unidade}-Revezamento-${genero}`;
+          limiteRevezamento[genero][chaveRev] = (limiteRevezamento[genero][chaveRev] || 0) + 1;
+          if (limiteRevezamento[genero][chaveRev] > 4) {
+            return alert(`Limite de 1 equipe de revezamento por gênero excedido.`);
+          }
+        }
+      }
+
+      alert("Formulário validado e pronto para envio!");
+      // Aqui você pode integrar com Google Sheets ou backend
     }
-
-    function filtrarCategorias(selectGenero) {
-      const divAluno = selectGenero.closest(".aluno");
-      const categoriaSelect = divAluno.querySelector(".categoria");
-      const escola = document.getElementById("unidadeEnsino").value;
-      const genero = selectGenero.value;
-
-      categoriaSelect.innerHTML = `<option value="">
+  </script>
+</body>
+</html>
