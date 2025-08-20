@@ -105,7 +105,83 @@
       }
 
       alert("Formulário validado e pronto para envio!");
-      // Aqui você pode integrar com Google Sheets ou backend
+     function doPost(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Inscricoes");
+  const data = JSON.parse(e.postData.contents);
+
+  const unidade = data.unidade;
+  const alunos = data.alunos;
+
+  const registros = sheet.getDataRange().getValues();
+  const erros = [];
+
+  const contadorProvas = {};
+  const contadorRevezamento = {};
+
+  for (let aluno of alunos) {
+    const nome = aluno.nome.trim();
+    const genero = aluno.genero;
+    const prova1 = aluno.prova1;
+    const prova2 = aluno.prova2;
+    const revezamento = aluno.revezamento;
+
+    if (!nome || !genero || !prova1) {
+      erros.push(`Aluno ${nome || "(sem nome)"} está com campos obrigatórios em branco.`);
+      continue;
+    }
+
+    if (prova1 === prova2 && prova2 !== "") {
+      erros.push(`Aluno ${nome} não pode repetir a mesma prova.`);
+      continue;
+    }
+
+    // Validação por aluno
+    let provasIndividuais = [prova1, prova2].filter(p => p !== "");
+    if (provasIndividuais.length > 2) {
+      erros.push(`Aluno ${nome} excedeu o limite de 2 provas individuais.`);
+      continue;
+    }
+
+    // Validação por escola/gênero/prova
+    for (let prova of provasIndividuais) {
+      const chave = `${unidade}-${prova}-${genero}`;
+      contadorProvas[chave] = (contadorProvas[chave] || 0) + 1;
+      if (contadorProvas[chave] > 2) {
+        erros.push(`Limite de 2 alunos por prova (${prova}) por gênero (${genero}) excedido.`);
+      }
+    }
+
+    // Validação de revezamento
+    if (revezamento === "Sim") {
+      const chaveRev = `${unidade}-Revezamento-${genero}`;
+      contadorRevezamento[chaveRev] = (contadorRevezamento[chaveRev] || 0) + 1;
+      if (contadorRevezamento[chaveRev] > 4) {
+        erros.push(`Limite de 1 equipe de revezamento por gênero (${genero}) excedido.`);
+      }
+    }
+  }
+
+  if (erros.length > 0) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "erro", mensagens: erros }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // Salvar dados
+  for (let aluno of alunos) {
+    sheet.appendRow([
+      unidade,
+      aluno.nome,
+      aluno.genero,
+      aluno.prova1,
+      aluno.prova2,
+      aluno.revezamento
+    ]);
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({ status: "sucesso", mensagem: "Inscrição realizada com sucesso!" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
     }
   </script>
 </body>
