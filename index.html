@@ -117,28 +117,27 @@
       "EEB MARINA VIEIRA LEAL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
       "EEB NORMA MÔNICA SABEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
       "EEB PROF OLÍMPIO MORETTO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "IFSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
+      "FSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
     };
 
     const provasPorCategoria = {
-      "MIRIM": ["50m", "100m", "Salto em distância", "Arremesso de peso"],
-      "INFANTIL": ["100m", "200m", "400m", "Salto em altura", "Lançamento de dardo"],
-      "INFANTO": ["400m", "800m", "1500m", "Salto triplo", "Arremesso de disco"]
+      "MIRIM": ["50m","100m","Salto em distância","Arremesso de peso"],
+      "INFANTIL": ["100m","200m","400m","Salto em altura","Lançamento de dardo"],
+      "INFANTO": ["400m","800m","1500m","Salto triplo","Arremesso de disco"]
     };
 
-    const revezamentos = ["4x100m", "4x400m"];
-    const $ = (s, r = document) => r.querySelector(s);
-    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+    const revezamentos = ["4x100m","4x400m"];
+    const $  = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
-    // Agora puxamos corretamente o template do DOM
-    const studentTpl = document.getElementById('studentTemplate');
+    // Puxa o template do DOM
+    const studentTpl = $("#studentTemplate");
 
-    // Popula o select de escolas
+    // Popula select de escolas
     const schoolSel = $("#school");
     Object.keys(SCHOOLS).forEach(name => {
       const o = document.createElement("option");
-      o.value = name;
-      o.textContent = name;
+      o.value = name; o.textContent = name;
       schoolSel.appendChild(o);
     });
 
@@ -149,27 +148,25 @@
       if (!data) return;
       showReview(data);
     };
-    $("#cancelReview").onclick  = () => $("#reviewModal").style.display = "none";
+    $("#cancelReview").onclick = () => $("#reviewModal").style.display = "none";
     $("#confirmReview").onclick = () => {
       const data = collectData();
       fetch(SCRIPT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type":"application/json"},
         body: JSON.stringify(data)
       })
-      .then(res => res.json())
-      .then(r => {
+      .then(r=>r.json())
+      .then(res=>{
         $("#reviewModal").style.display = "none";
-        if (r.result === "success") {
-          alert("Inscrição confirmada! Um extrato foi enviado para o e-mail informado.");
+        if(res.result==="success"){
+          alert("Inscrição confirmada! Um extrato foi enviado.");
           location.reload();
-        } else {
-          alert("Erro: " + r.error);
-        }
+        } else alert("Erro: "+res.error);
       });
     };
 
-    function addStudent() {
+    function addStudent(){
       const node = studentTpl.content.firstElementChild.cloneNode(true);
       $(".btnRemove", node).onclick = () => node.remove();
 
@@ -181,67 +178,93 @@
 
       selGender.onchange = () => {
         selCategory.innerHTML = `<option value="">Selecione…</option>`;
-        if (schoolSel.value && selGender.value) {
+        if(schoolSel.value && selGender.value){
           SCHOOLS[schoolSel.value]
-            .filter(cat => cat.includes(selGender.value))
-            .forEach(cat => selCategory.innerHTML += `<option>${cat}</option>`);
+            .filter(cat=>cat.includes(selGender.value))
+            .forEach(cat=> selCategory.innerHTML += `<option value="${cat}">${cat}</option>`);
         }
       };
 
       selCategory.onchange = () => {
         const key = selCategory.value.split(" ")[0];
-        const provas = provasPorCategoria[key] || [];
+        const provas = provasPorCategoria[key]||[];
         selEvent1.innerHTML = `<option value="">Selecione…</option>`;
         selEvent2.innerHTML = `<option value="">Selecione…</option>`;
-        provas.forEach(p => {
-          selEvent1.innerHTML += `<option>${p}</option>`;
-          selEvent2.innerHTML += `<option>${p}</option>`;
+        provas.forEach(p=>{
+          selEvent1.innerHTML += `<option value="${p}">${p}</option>`;
+          selEvent2.innerHTML += `<option value="${p}">${p}</option>`;
         });
         selRelay.innerHTML = `<option value="">Não</option>`;
-        revezamentos.forEach(r => selRelay.innerHTML += `<option>${r}</option>`);
+        revezamentos.forEach(r=> selRelay.innerHTML += `<option value="${r}">${r}</option>`);
       };
+
+      // Garante regras de duplicidade e limite de 2 inscrições
+      [selEvent1, selEvent2].forEach(current=>{
+        const other = current===selEvent1 ? selEvent2 : selEvent1;
+        current.onchange = () => {
+          const val = current.value;
+          // 1) Mesma prova nos dois selects do mesmo aluno?
+          if(val && other.value===val){
+            alert("Este aluno já escolheu essa prova no outro campo.");
+            current.value = "";
+            return;
+          }
+          // 2) Contar quantas vezes já foi escolhido (toda a lista)
+          let cnt=0;
+          $$(".student").forEach(c=>{
+            if($(".sel-event1",c).value===val) cnt++;
+            if($(".sel-event2",c).value===val) cnt++;
+          });
+          if(val && cnt>2){
+            alert("Limite de 2 alunos por escola/categoria/gênero nesta prova excedido.");
+            current.value="";
+            return;
+          }
+          // 3) Remover opção selecionada do outro select
+          other.querySelectorAll("option").forEach(opt=>{
+            opt.disabled = (opt.value===val);
+          });
+        };
+      });
 
       $("#students").appendChild(node);
     }
 
-    function collectData() {
-      const school  = schoolSel.value;
-      if (!school) { alert("Selecione a escola"); return null; }
+    function collectData(){
+      const school = schoolSel.value;
+      if(!school){ alert("Selecione a escola."); return null; }
       const teacher = $("#teacher").value;
       const email   = $("#email").value;
       const phone   = $("#phone").value;
-      const students = [];
-      let valid = true;
+      const students=[]; let valid=true;
 
-      $$(".student").forEach(card => {
-        const st = {
-          name:     $(".inp-name", card).value,
-          dob:      $(".inp-dob",  card).value,
-          doc:      $(".inp-doc",  card).value,
-          gender:   $(".sel-gender",  card).value,
-          category: $(".sel-category", card).value,
-          prova1:   $(".sel-event1",  card).value,
-          prova2:   $(".sel-event2",  card).value,
-          relay:    $(".sel-relay",   card).value
+      $$(".student").forEach(c=>{
+        const st={
+          name:$(".inp-name",c).value,
+          dob: $(".inp-dob",c).value,
+          doc: $(".inp-doc",c).value,
+          gender: $(".sel-gender",c).value,
+          category:$(".sel-category",c).value,
+          prova1: $(".sel-event1",c).value,
+          prova2: $(".sel-event2",c).value,
+          relay: $(".sel-relay",c).value
         };
-        if (!st.name || !st.dob || !st.doc || !st.gender || !st.category) {
-          valid = false;
+        if(!st.name||!st.dob||!st.doc||!st.gender||!st.category){
+          valid=false;
         }
         students.push(st);
       });
 
-      if (!valid) { alert("Preencha todos os campos dos alunos"); return null; }
-      return { school, teacher, email, phone, students };
+      if(!valid){ alert("Preencha todos os campos dos alunos."); return null; }
+      return {school,teacher,email,phone,students};
     }
 
-    function showReview(data) {
-      let html = `
-        <p>
-          <b>Escola:</b> ${data.school}<br>
-          <b>Professor:</b> ${data.teacher}<br>
-          <b>Email:</b> ${data.email}<br>
-          <b>Telefone:</b> ${data.phone}
-        </p>
+    function showReview(data){
+      let html=`
+        <p><b>Escola:</b> ${data.school}<br>
+        <b>Professor:</b> ${data.teacher}<br>
+        <b>Email:</b> ${data.email}<br>
+        <b>Telefone:</b> ${data.phone}</p>
         <table>
           <thead>
             <tr>
@@ -249,19 +272,18 @@
               <th>Gênero</th><th>Categoria</th>
               <th>Prova 1</th><th>Prova 2</th><th>Revezamento</th>
             </tr>
-          </thead>
-          <tbody>`;
-      data.students.forEach(s => {
-        html += `
-            <tr>
-              <td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td>
-              <td>${s.gender}</td><td>${s.category}</td>
-              <td>${s.prova1}</td><td>${s.prova2}</td><td>${s.relay}</td>
-            </tr>`;
+          </thead><tbody>`;
+      data.students.forEach(s=>{
+        html+=`
+          <tr>
+            <td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td>
+            <td>${s.gender}</td><td>${s.category}</td>
+            <td>${s.prova1}</td><td>${s.prova2}</td><td>${s.relay}</td>
+          </tr>`;
       });
-      html += `</tbody></table>`;
-      $("#reviewContent").innerHTML = html;
-      $("#reviewModal").style.display = "flex";
+      html+=`</tbody></table>`;
+      $("#reviewContent").innerHTML=html;
+      $("#reviewModal").style.display="flex";
     }
   </script>
 </body>
