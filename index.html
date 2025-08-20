@@ -117,7 +117,7 @@
       "EEB MARINA VIEIRA LEAL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
       "EEB NORMA MÔNICA SABEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
       "EEB PROF OLÍMPIO MORETTO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "IFSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
+      "FSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
     };
 
     const provasPorCategoria = {
@@ -127,9 +127,13 @@
     };
 
     const revezamentos = ["4x100m", "4x400m"];
-    const $ = (sel, root = document) => root.querySelector(sel);
-    const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+    const $ = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
+    // Agora puxamos corretamente o template do DOM
+    const studentTpl = document.getElementById('studentTemplate');
+
+    // Popula o select de escolas
     const schoolSel = $("#school");
     Object.keys(SCHOOLS).forEach(name => {
       const o = document.createElement("option");
@@ -138,13 +142,14 @@
       schoolSel.appendChild(o);
     });
 
+    // Eventos principais
     $("#addStudentBtn").onclick = addStudent;
     $("#reviewBtn").onclick = () => {
       const data = collectData();
       if (!data) return;
       showReview(data);
     };
-    $("#cancelReview").onclick = () => $("#reviewModal").style.display = "none";
+    $("#cancelReview").onclick  = () => $("#reviewModal").style.display = "none";
     $("#confirmReview").onclick = () => {
       const data = collectData();
       fetch(SCRIPT_URL, {
@@ -175,18 +180,17 @@
       const selRelay    = $(".sel-relay", node);
 
       selGender.onchange = () => {
-        const g = selGender.value;
         selCategory.innerHTML = `<option value="">Selecione…</option>`;
-        if (schoolSel.value && g) {
+        if (schoolSel.value && selGender.value) {
           SCHOOLS[schoolSel.value]
-            .filter(c => c.includes(g))
-            .forEach(c => selCategory.innerHTML += `<option>${c}</option>`);
+            .filter(cat => cat.includes(selGender.value))
+            .forEach(cat => selCategory.innerHTML += `<option>${cat}</option>`);
         }
       };
 
       selCategory.onchange = () => {
-        const catKey = selCategory.value.split(" ")[0];
-        const provas = provasPorCategoria[catKey] || [];
+        const key = selCategory.value.split(" ")[0];
+        const provas = provasPorCategoria[key] || [];
         selEvent1.innerHTML = `<option value="">Selecione…</option>`;
         selEvent2.innerHTML = `<option value="">Selecione…</option>`;
         provas.forEach(p => {
@@ -246,16 +250,14 @@
               <th>Prova 1</th><th>Prova 2</th><th>Revezamento</th>
             </tr>
           </thead>
-          <tbody>
-      `;
+          <tbody>`;
       data.students.forEach(s => {
         html += `
-          <tr>
-            <td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td>
-            <td>${s.gender}</td><td>${s.category}</td>
-            <td>${s.prova1}</td><td>${s.prova2}</td><td>${s.relay}</td>
-          </tr>
-        `;
+            <tr>
+              <td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td>
+              <td>${s.gender}</td><td>${s.category}</td>
+              <td>${s.prova1}</td><td>${s.prova2}</td><td>${s.relay}</td>
+            </tr>`;
       });
       html += `</tbody></table>`;
       $("#reviewContent").innerHTML = html;
