@@ -2,186 +2,205 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Formulário de Inscrição</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inscrição – Jogos Escolares (Atletismo)</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .aluno { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-    select, input { margin: 5px 0; width: 100%; }
-    button { margin-top: 10px; }
+    body { background:#0f172a; color:#e5e7eb; font-family:system-ui; margin:0; }
+    .container{ max-width:900px; margin:20px auto; padding:16px; }
+    .card{ background:#111827; border-radius:12px; padding:16px; margin-bottom:16px; }
+    h1,h2{ margin:0 0 12px 0; }
+    label{ display:block; margin:6px 0; color:#94a3b8; }
+    input, select{ width:100%; padding:8px; border-radius:8px; border:1px solid #1f2937; background:#0b1020; color:#e5e7eb; }
+    .row{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
+    .btn{ padding:10px 14px; border:none; border-radius:8px; cursor:pointer; margin-top:8px; }
+    .btn-primary{ background:#22d3ee; color:#021015; font-weight:700; }
+    .btn-danger{ background:#fb7185; color:#160709; font-weight:700; }
+    .modal{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; }
+    .modal-content{ background:#1e293b; padding:20px; border-radius:12px; max-width:800px; width:90%; max-height:80vh; overflow:auto; }
+    table{ width:100%; border-collapse:collapse; margin-top:12px; }
+    th,td{ border:1px solid #334155; padding:6px; font-size:.9rem; text-align:left; }
   </style>
 </head>
 <body>
-  <h1>Formulário de Inscrição</h1>
+  <div class="container">
+    <div class="card">
+      <h1>Inscrição – Atletismo Convencional • Jogos Escolares</h1>
+      <p>Cada aluno: até <b>2 provas individuais</b> + <b>1 revezamento</b>.<br>
+      Cada escola: até <b>2 atletas/prova/gênero</b> + <b>1 equipe de revezamento</b> (4 atletas) por categoria/gênero.</p>
+    </div>
 
-  <label for="unidade">Unidade de Ensino:</label>
-  <select id="unidade" onchange="atualizarCategorias()">
-    <option value="">Selecione</option>
-    <option value="Escola A">Escola A</option>
-    <option value="Escola B">Escola B</option>
-  </select>
+    <!-- Identificação -->
+    <div class="card">
+      <h2>1) Identificação da Unidade de Ensino</h2>
+      <div class="row">
+        <div>
+          <label>Unidade de Ensino</label>
+          <select id="school" required></select>
+        </div>
+        <div>
+          <label>Professor Responsável</label>
+          <input id="teacher" type="text" required />
+        </div>
+        <div>
+          <label>Email</label>
+          <input id="email" type="email" required />
+        </div>
+        <div>
+          <label>Telefone</label>
+          <input id="phone" type="tel" required />
+        </div>
+      </div>
+    </div>
 
-  <div id="alunos"></div>
-  <button onclick="adicionarAluno()">Adicionar Aluno</button>
-  <button onclick="enviarFormulario()">Enviar</button>
+    <!-- Alunos -->
+    <div class="card">
+      <h2>2) Inscrição de Alunos</h2>
+      <div id="students"></div>
+      <button class="btn btn-primary" id="addStudentBtn" type="button">+ Adicionar aluno</button>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-primary" id="reviewBtn" type="button">Revisar inscrição</button>
+    </div>
+  </div>
+
+  <!-- Modal revisão -->
+  <div class="modal" id="reviewModal">
+    <div class="modal-content">
+      <h2>Revisão da Inscrição</h2>
+      <div id="reviewContent"></div>
+      <div style="margin-top:12px; text-align:right;">
+        <button class="btn btn-danger" id="cancelReview">Cancelar</button>
+        <button class="btn btn-primary" id="confirmReview">Confirmar e Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template aluno -->
+  <template id="studentTemplate">
+    <div class="card student">
+      <div class="row">
+        <div><label>Nome</label><input type="text" class="inp-name" required></div>
+        <div><label>Data de Nascimento</label><input type="date" class="inp-dob" required></div>
+        <div><label>Documento</label><input type="text" class="inp-doc" required></div>
+        <div>
+          <label>Gênero</label>
+          <select class="sel-gender" required>
+            <option value="">Selecione…</option>
+            <option value="MASCULINO">Masculino</option>
+            <option value="FEMININO">Feminino</option>
+          </select>
+        </div>
+        <div>
+          <label>Categoria</label>
+          <select class="sel-category" required></select>
+        </div>
+      </div>
+      <div class="row">
+        <div><label>Prova 1</label><select class="sel-event1"></select></div>
+        <div><label>Prova 2</label><select class="sel-event2"></select></div>
+        <div><label>Revezamento</label><select class="sel-relay"></select></div>
+      </div>
+      <button class="btn btn-danger btnRemove" type="button">Remover</button>
+    </div>
+  </template>
 
   <script>
-    const categoriasPorUnidade = {
-      "Escola A": ["100m", "200m", "Revezamento"],
-      "Escola B": ["Salto", "Lançamento", "Revezamento"]
+    // ✅ Atualizado com sua URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwe9Gpt4gDZu6BhsE5o4NPHikA4Y5yQCAbuX_p90e5woe3nkDDdWgUkod2gzrZ1th29dA/exec";
+
+    // === Configurações ===
+    const SCHOOLS = {
+      "COLÉGIO MADRE FRANCISCA LAMPEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO"],
+      "COLÉGIO UNI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB DOLORES L. S. KRAUSS": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB FERANDINO DAGNONI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB FREI GODOFREDO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB FREI POLICARPO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB HONÓRIO MIRANDA": ["INFANTIL MASCULINO","INFANTO MASCULINO"],
+      "EEB IVO D´ÁQUINO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB LUIZ FRANZÓI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB MARINA VIEIRA LEAL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB NORMA MÔNICA SABEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB PROF OLÍMPIO MORETTO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "FSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
     };
 
-    const limitePorProva = {};
-    const limiteRevezamento = { masculino: {}, feminino: {} };
+    const $ = (s,r=document)=>r.querySelector(s);
+    const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 
-    function atualizarCategorias() {
-      const unidade = document.getElementById("unidade").value;
-      document.querySelectorAll(".categoria").forEach(select => {
-        select.innerHTML = categoriasPorUnidade[unidade]
-          .map(cat => `<option value="${cat}">${cat}</option>`)
-          .join("");
+    const schoolSel=$("#school");
+    Object.keys(SCHOOLS).forEach(s=>{
+      let opt=document.createElement("option");
+      opt.value=s; opt.textContent=s; schoolSel.appendChild(opt);
+    });
+
+    const studentTpl=$("#studentTemplate");
+
+    $("#addStudentBtn").onclick=()=>addStudent();
+    function addStudent(){
+      let node=studentTpl.content.firstElementChild.cloneNode(true);
+      $(".btnRemove",node).onclick=()=>node.remove();
+      $("#students").appendChild(node);
+    }
+
+    // Revisão
+    $("#reviewBtn").onclick=()=>{
+      const data=collectData();
+      if(!data) return;
+      showReview(data);
+    };
+
+    $("#cancelReview").onclick=()=>$("#reviewModal").style.display="none";
+    $("#confirmReview").onclick=()=>{
+      const data=collectData();
+      fetch(SCRIPT_URL,{
+        method:"POST",
+        body:JSON.stringify(data),
+        headers:{"Content-Type":"application/json"}
+      }).then(r=>r.json()).then(res=>{
+        $("#reviewModal").style.display="none";
+        if(res.result==="success"){ alert("Inscrição confirmada! Um extrato foi enviado para o e-mail informado."); location.reload(); }
+        else alert("Erro: "+res.error);
       });
+    };
+
+    function collectData(){
+      const school=schoolSel.value;
+      if(!school){alert("Selecione a escola");return null;}
+      const teacher=$("#teacher").value, email=$("#email").value, phone=$("#phone").value;
+      let students=[];
+      let valid=true;
+      $$(".student").forEach(card=>{
+        let st={
+          name:$(".inp-name",card).value,
+          dob:$(".inp-dob",card).value,
+          doc:$(".inp-doc",card).value,
+          gender:$(".sel-gender",card).value,
+          category:$(".sel-category",card).value,
+          prova1:$(".sel-event1",card).value,
+          prova2:$(".sel-event2",card).value,
+          relay:$(".sel-relay",card).value
+        };
+        if(!st.name||!st.dob||!st.doc||!st.gender||!st.category) valid=false;
+        students.push(st);
+      });
+      if(!valid){alert("Preencha todos os campos dos alunos");return null;}
+      return {school,teacher,email,phone,students};
     }
 
-    function adicionarAluno() {
-      const unidade = document.getElementById("unidade").value;
-      if (!unidade) return alert("Selecione a unidade de ensino primeiro.");
-
-      const div = document.createElement("div");
-      div.className = "aluno";
-      div.innerHTML = `
-        <label>Nome:</label><input type="text" class="nome" />
-        <label>Gênero:</label>
-        <select class="genero" onchange="atualizarCategorias()">
-          <option value="masculino">Masculino</option>
-          <option value="feminino">Feminino</option>
-        </select>
-        <label>Prova 1:</label><select class="categoria prova1"></select>
-        <label>Prova 2:</label><select class="categoria prova2"></select>
-        <label>Revezamento:</label>
-        <select class="revezamento">
-          <option value="">Não</option>
-          <option value="Sim">Sim</option>
-        </select>
-        <button onclick="this.parentElement.remove()">Remover</button>
-      `;
-      document.getElementById("alunos").appendChild(div);
-      atualizarCategorias();
-    }
-
-    function enviarFormulario() {
-      const unidade = document.getElementById("unidade").value;
-      const alunos = [...document.querySelectorAll(".aluno")];
-      const provasPorAluno = {};
-      const provasPorEscola = {};
-
-      for (const aluno of alunos) {
-        const nome = aluno.querySelector(".nome").value.trim();
-        const genero = aluno.querySelector(".genero").value;
-        const prova1 = aluno.querySelector(".prova1").value;
-        const prova2 = aluno.querySelector(".prova2").value;
-        const revezamento = aluno.querySelector(".revezamento").value;
-
-        if (!nome || !genero || !prova1) return alert("Preencha todos os campos obrigatórios.");
-
-        if (prova1 === prova2) return alert(`Aluno ${nome} não pode repetir a mesma prova.`);
-
-        const chave1 = `${unidade}-${prova1}-${genero}`;
-        const chave2 = `${unidade}-${prova2}-${genero}`;
-
-        provasPorEscola[chave1] = (provasPorEscola[chave1] || 0) + 1;
-        if (prova2) provasPorEscola[chave2] = (provasPorEscola[chave2] || 0) + 1;
-
-        if (provasPorEscola[chave1] > 2 || provasPorEscola[chave2] > 2) {
-          return alert(`Limite de 2 alunos por prova por gênero excedido em ${prova1} ou ${prova2}.`);
-        }
-
-        if (revezamento === "Sim") {
-          const chaveRev = `${unidade}-Revezamento-${genero}`;
-          limiteRevezamento[genero][chaveRev] = (limiteRevezamento[genero][chaveRev] || 0) + 1;
-          if (limiteRevezamento[genero][chaveRev] > 4) {
-            return alert(`Limite de 1 equipe de revezamento por gênero excedido.`);
-          }
-        }
-      }
-
-      alert("Formulário validado e pronto para envio!");
-     function doPost(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName("Inscricoes");
-  const data = JSON.parse(e.postData.contents);
-
-  const unidade = data.unidade;
-  const alunos = data.alunos;
-
-  const registros = sheet.getDataRange().getValues();
-  const erros = [];
-
-  const contadorProvas = {};
-  const contadorRevezamento = {};
-
-  for (let aluno of alunos) {
-    const nome = aluno.nome.trim();
-    const genero = aluno.genero;
-    const prova1 = aluno.prova1;
-    const prova2 = aluno.prova2;
-    const revezamento = aluno.revezamento;
-
-    if (!nome || !genero || !prova1) {
-      erros.push(`Aluno ${nome || "(sem nome)"} está com campos obrigatórios em branco.`);
-      continue;
-    }
-
-    if (prova1 === prova2 && prova2 !== "") {
-      erros.push(`Aluno ${nome} não pode repetir a mesma prova.`);
-      continue;
-    }
-
-    // Validação por aluno
-    let provasIndividuais = [prova1, prova2].filter(p => p !== "");
-    if (provasIndividuais.length > 2) {
-      erros.push(`Aluno ${nome} excedeu o limite de 2 provas individuais.`);
-      continue;
-    }
-
-    // Validação por escola/gênero/prova
-    for (let prova of provasIndividuais) {
-      const chave = `${unidade}-${prova}-${genero}`;
-      contadorProvas[chave] = (contadorProvas[chave] || 0) + 1;
-      if (contadorProvas[chave] > 2) {
-        erros.push(`Limite de 2 alunos por prova (${prova}) por gênero (${genero}) excedido.`);
-      }
-    }
-
-    // Validação de revezamento
-    if (revezamento === "Sim") {
-      const chaveRev = `${unidade}-Revezamento-${genero}`;
-      contadorRevezamento[chaveRev] = (contadorRevezamento[chaveRev] || 0) + 1;
-      if (contadorRevezamento[chaveRev] > 4) {
-        erros.push(`Limite de 1 equipe de revezamento por gênero (${genero}) excedido.`);
-      }
-    }
-  }
-
-  if (erros.length > 0) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "erro", mensagens: erros }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // Salvar dados
-  for (let aluno of alunos) {
-    sheet.appendRow([
-      unidade,
-      aluno.nome,
-      aluno.genero,
-      aluno.prova1,
-      aluno.prova2,
-      aluno.revezamento
-    ]);
-  }
-
-  return ContentService.createTextOutput(JSON.stringify({ status: "sucesso", mensagem: "Inscrição realizada com sucesso!" }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
+    function showReview(data){
+      let html=`<p><b>Escola:</b> ${data.school}<br>
+      <b>Professor:</b> ${data.teacher}<br>
+      <b>Email:</b> ${data.email}<br>
+      <b>Telefone:</b> ${data.phone}</p>`;
+      html+=`<table><thead><tr><th>Nome</th><th>Nascimento</th><th>Doc</th><th>Gênero</th><th>Categoria</th><th>Prova 1</th><th>Prova 2</th><th>Revezamento</th></tr></thead><tbody>`;
+      data.students.forEach(s=>{
+        html+=`<tr><td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td><td>${s.gender}</td><td>${s.category}</td><td>${s.prova1}</td><td>${s.prova2}</td><td>${s.relay}</td></tr>`;
+      });
+      html+="</tbody></table>";
+      $("#reviewContent").innerHTML=html;
+      $("#reviewModal").style.display="flex";
     }
   </script>
 </body>
