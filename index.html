@@ -25,10 +25,14 @@
   <div class="container">
     <div class="card">
       <h1>Inscrição – Atletismo Convencional • Jogos Escolares</h1>
-      <p>Cada aluno: até <b>2 provas individuais</b> + <b>1 revezamento</b>.<br>
-      Cada escola: até <b>2 atletas/prova/gênero</b> + <b>1 equipe de revezamento</b> (4 atletas) por categoria/gênero.</p>
+      <p>
+        Cada aluno: até <b>2 provas individuais</b> + <b>1 revezamento</b>.<br>
+        Cada escola: até <b>2 atletas/prova/gênero</b> + <b>1 equipe de revezamento</b>
+        (4 atletas) por categoria/gênero.
+      </p>
     </div>
 
+    <!-- Identificação da Escola -->
     <div class="card">
       <h2>1) Identificação da Unidade de Ensino</h2>
       <div class="row">
@@ -51,17 +55,20 @@
       </div>
     </div>
 
+    <!-- Inscrição de Alunos -->
     <div class="card">
       <h2>2) Inscrição de Alunos</h2>
       <div id="students"></div>
       <button class="btn btn-primary" id="addStudentBtn" type="button">+ Adicionar aluno</button>
     </div>
 
+    <!-- Botão de Revisão -->
     <div class="card">
       <button class="btn btn-primary" id="reviewBtn" type="button">Revisar inscrição</button>
     </div>
   </div>
 
+  <!-- Modal de Revisão -->
   <div class="modal" id="reviewModal">
     <div class="modal-content">
       <h2>Revisão da Inscrição</h2>
@@ -73,6 +80,7 @@
     </div>
   </div>
 
+  <!-- Template de Aluno -->
   <template id="studentTemplate">
     <div class="card student">
       <div class="row">
@@ -117,7 +125,7 @@
       "EEB MARINA VIEIRA LEAL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
       "EEB NORMA MÔNICA SABEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
       "EEB PROF OLÍMPIO MORETTO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "FSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
+      "IFSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
     };
 
     const provasPorCategoria = {
@@ -130,43 +138,52 @@
     const $  = (s, r=document) => r.querySelector(s);
     const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
-    // Puxa o template do DOM
     const studentTpl = $("#studentTemplate");
+    const schoolSel   = $("#school");
 
-    // Popula select de escolas
-    const schoolSel = $("#school");
+    // Preenche escolas
     Object.keys(SCHOOLS).forEach(name => {
       const o = document.createElement("option");
       o.value = name; o.textContent = name;
       schoolSel.appendChild(o);
     });
 
-    // Eventos principais
+    // Eventos
     $("#addStudentBtn").onclick = addStudent;
-    $("#reviewBtn").onclick = () => {
+    $("#reviewBtn").onclick     = () => {
       const data = collectData();
       if (!data) return;
       showReview(data);
     };
-    $("#cancelReview").onclick = () => $("#reviewModal").style.display = "none";
+    $("#cancelReview").onclick  = () => $("#reviewModal").style.display = "none";
     $("#confirmReview").onclick = () => {
       const data = collectData();
+      if (!data) return;
+
       fetch(SCRIPT_URL, {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       })
-      .then(r=>r.json())
-      .then(res=>{
+      .then(res => res.json())
+      .then(res => {
         $("#reviewModal").style.display = "none";
-        if(res.result==="success"){
-          alert("Inscrição confirmada! Um extrato foi enviado.");
+
+        if (res.status === "sucesso") {
+          alert(res.mensagem || "Inscrição enviada com sucesso!");
           location.reload();
-        } else alert("Erro: "+res.error);
+        } else {
+          alert("Erros:\n" + (res.mensagens || []).join("\n"));
+        }
+      })
+      .catch(err => {
+        $("#reviewModal").style.display = "none";
+        alert("Erro ao enviar: " + err.message);
       });
     };
 
-    function addStudent(){
+    // Função para adicionar aluno
+    function addStudent() {
       const node = studentTpl.content.firstElementChild.cloneNode(true);
       $(".btnRemove", node).onclick = () => node.remove();
 
@@ -178,51 +195,48 @@
 
       selGender.onchange = () => {
         selCategory.innerHTML = `<option value="">Selecione…</option>`;
-        if(schoolSel.value && selGender.value){
+        if (schoolSel.value && selGender.value) {
           SCHOOLS[schoolSel.value]
-            .filter(cat=>cat.includes(selGender.value))
-            .forEach(cat=> selCategory.innerHTML += `<option value="${cat}">${cat}</option>`);
+            .filter(cat => cat.includes(selGender.value))
+            .forEach(cat => selCategory.innerHTML += `<option>${cat}</option>`);
         }
       };
 
       selCategory.onchange = () => {
-        const key = selCategory.value.split(" ")[0];
-        const provas = provasPorCategoria[key]||[];
+        const key    = selCategory.value.split(" ")[0];
+        const provas = provasPorCategoria[key] || [];
         selEvent1.innerHTML = `<option value="">Selecione…</option>`;
         selEvent2.innerHTML = `<option value="">Selecione…</option>`;
-        provas.forEach(p=>{
-          selEvent1.innerHTML += `<option value="${p}">${p}</option>`;
-          selEvent2.innerHTML += `<option value="${p}">${p}</option>`;
+        provas.forEach(p => {
+          selEvent1.innerHTML += `<option>${p}</option>`;
+          selEvent2.innerHTML += `<option>${p}</option>`;
         });
         selRelay.innerHTML = `<option value="">Não</option>`;
-        revezamentos.forEach(r=> selRelay.innerHTML += `<option value="${r}">${r}</option>`);
+        revezamentos.forEach(r => selRelay.innerHTML += `<option>${r}</option>`);
       };
 
-      // Garante regras de duplicidade e limite de 2 inscrições
-      [selEvent1, selEvent2].forEach(current=>{
-        const other = current===selEvent1 ? selEvent2 : selEvent1;
+      // Regras de duplicidade e limite por prova
+      [selEvent1, selEvent2].forEach(current => {
+        const other = current === selEvent1 ? selEvent2 : selEvent1;
         current.onchange = () => {
           const val = current.value;
-          // 1) Mesma prova nos dois selects do mesmo aluno?
-          if(val && other.value===val){
+          if (val && other.value === val) {
             alert("Este aluno já escolheu essa prova no outro campo.");
             current.value = "";
             return;
           }
-          // 2) Contar quantas vezes já foi escolhido (toda a lista)
-          let cnt=0;
-          $$(".student").forEach(c=>{
-            if($(".sel-event1",c).value===val) cnt++;
-            if($(".sel-event2",c).value===val) cnt++;
+          let cnt = 0;
+          $$(".student").forEach(c => {
+            if ($(".sel-event1", c).value === val) cnt++;
+            if ($(".sel-event2", c).value === val) cnt++;
           });
-          if(val && cnt>2){
-            alert("Limite de 2 alunos por escola/categoria/gênero nesta prova excedido.");
-            current.value="";
+          if (val && cnt > 2) {
+            alert("Limite de 2 inscrições por prova/gênero/escola excedido.");
+            current.value = "";
             return;
           }
-          // 3) Remover opção selecionada do outro select
-          other.querySelectorAll("option").forEach(opt=>{
-            opt.disabled = (opt.value===val);
+          other.querySelectorAll("option").forEach(opt => {
+            opt.disabled = opt.value === val;
           });
         };
       });
@@ -230,41 +244,50 @@
       $("#students").appendChild(node);
     }
 
-    function collectData(){
-      const school = schoolSel.value;
-      if(!school){ alert("Selecione a escola."); return null; }
+    // Coleta dados do formulário
+    function collectData() {
+      const school  = schoolSel.value;
+      if (!school) { alert("Selecione a escola."); return null; }
       const teacher = $("#teacher").value;
       const email   = $("#email").value;
       const phone   = $("#phone").value;
-      const students=[]; let valid=true;
+      const students = [];
+      let valid = true;
 
-      $$(".student").forEach(c=>{
-        const st={
-          name:$(".inp-name",c).value,
-          dob: $(".inp-dob",c).value,
-          doc: $(".inp-doc",c).value,
-          gender: $(".sel-gender",c).value,
-          category:$(".sel-category",c).value,
-          prova1: $(".sel-event1",c).value,
-          prova2: $(".sel-event2",c).value,
-          relay: $(".sel-relay",c).value
+      $$(".student").forEach(c => {
+        const st = {
+          name:     $(".inp-name", c).value,
+          dob:      $(".inp-dob",  c).value,
+          doc:      $(".inp-doc",  c).value,
+          gender:   $(".sel-gender",  c).value,
+          category: $(".sel-category", c).value,
+          prova1:   $(".sel-event1",  c).value,
+          prova2:   $(".sel-event2",  c).value,
+          relay:    $(".sel-relay",   c).value
         };
-        if(!st.name||!st.dob||!st.doc||!st.gender||!st.category){
-          valid=false;
+        if (!st.name || !st.dob || !st.doc || !st.gender || !st.category) {
+          valid = false;
         }
         students.push(st);
       });
 
-      if(!valid){ alert("Preencha todos os campos dos alunos."); return null; }
-      return {school,teacher,email,phone,students};
+      if (!valid) {
+        alert("Preencha todos os campos dos alunos.");
+        return null;
+      }
+      return { school, teacher, email, phone, students };
     }
 
-    function showReview(data){
-      let html=`
-        <p><b>Escola:</b> ${data.school}<br>
-        <b>Professor:</b> ${data.teacher}<br>
-        <b>Email:</b> ${data.email}<br>
-        <b>Telefone:</b> ${data.phone}</p>
+    // Exibe modal de revisão
+    function showReview(data) {
+      let html = `
+        <p>
+          <b>Escola:</b> ${data.school}<br>
+          <b>Professor:</b> ${data.teacher}<br>
+          <b>Email:</b> ${data.email}<br>
+          <b>Telefone:</b> ${data.
+.phone}
+        </p>
         <table>
           <thead>
             <tr>
@@ -272,18 +295,21 @@
               <th>Gênero</th><th>Categoria</th>
               <th>Prova 1</th><th>Prova 2</th><th>Revezamento</th>
             </tr>
-          </thead><tbody>`;
-      data.students.forEach(s=>{
-        html+=`
+          </thead>
+          <tbody>
+      `;
+      data.students.forEach(s => {
+        html += `
           <tr>
             <td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td>
             <td>${s.gender}</td><td>${s.category}</td>
             <td>${s.prova1}</td><td>${s.prova2}</td><td>${s.relay}</td>
-          </tr>`;
+          </tr>
+        `;
       });
-      html+=`</tbody></table>`;
-      $("#reviewContent").innerHTML=html;
-      $("#reviewModal").style.display="flex";
+      html += `</tbody></table>`;
+      $("#reviewContent").innerHTML = html;
+      $("#reviewModal").style.display = "flex";
     }
   </script>
 </body>
