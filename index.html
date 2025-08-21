@@ -108,7 +108,7 @@
 
   <script>
     const WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbwxWwJQ7selBiUg-47ZLgEGgMqgWBnP3OSSxeZBe-jU9UaEdDBAveEE_kzvGAY4SNGGbg/exec";
+  "https://script.google.com/macros/s/AKfycbxUvGDIWS00gJHA_KXz52oJGHVANS1v8TpXaVr0UC2oa7fQsXq-cvsX2ivYDp9ARvVDhA/exec";
 
     const SCHOOLS = {
       "COLÉGIO MADRE FRANCISCA LAMPEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO"],
@@ -160,10 +160,10 @@
       if (!data) return;
 
       fetch(WEBAPP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
       .then(res => res.json())
       .then(res => {
         $("#reviewModal").style.display = "none";
@@ -190,15 +190,22 @@
       const selEvent1   = $(".sel-event1", node);
       const selEvent2   = $(".sel-event2", node);
       const selRelay    = $(".sel-relay", node);
+      const inpDob      = $(".inp-dob", node);
 
-      selGender.onchange = () => {
+      // 🔹 Atualiza categorias ao mudar data de nascimento ou gênero
+      inpDob.onchange = atualizarCategorias;
+      selGender.onchange = atualizarCategorias;
+
+      function atualizarCategorias() {
         selCategory.innerHTML = `<option value="">Selecione…</option>`;
-        if (schoolSel.value && selGender.value) {
-          SCHOOLS[schoolSel.value]
-            .filter(cat => cat.includes(selGender.value))
-            .forEach(cat => selCategory.innerHTML += `<option>${cat}</option>`);
+        if (schoolSel.value && selGender.value && inpDob.value) {
+          const ano = new Date(inpDob.value).getFullYear();
+          const categoriasPermitidas = filtrarCategoriasPorAno(ano, selGender.value, schoolSel.value);
+          categoriasPermitidas.forEach(cat => {
+            selCategory.innerHTML += `<option>${cat}</option>`;
+          });
         }
-      };
+      }
 
       selCategory.onchange = () => {
         const key    = selCategory.value.split(" ")[0];
@@ -213,6 +220,7 @@
         revezamentos.forEach(r => selRelay.innerHTML += `<option>${r}</option>`);
       };
 
+      // Evita duplicar prova1/prova2 no mesmo aluno
       [selEvent1, selEvent2].forEach(current => {
         const other = current === selEvent1 ? selEvent2 : selEvent1;
         current.onchange = () => {
@@ -222,23 +230,24 @@
             current.value = "";
             return;
           }
-          let cnt = 0;
-          $$(".student").forEach(c => {
-            if ($(".sel-event1", c).value === val) cnt++;
-            if ($(".sel-event2", c).value === val) cnt++;
-          });
-          if (val && cnt > 2) {
-            alert("Limite de 2 inscrições por prova/gênero/escola excedido.");
-            current.value = "";
-            return;
-          }
-          other.querySelectorAll("option").forEach(opt => {
-            opt.disabled = opt.value === val;
-          });
         };
       });
 
       $("#students").appendChild(node);
+    }
+
+    // 🔹 Função que aplica regra idade ↔ categoria
+    function filtrarCategoriasPorAno(ano, genero, escola) {
+      let categorias = SCHOOLS[escola] || [];
+      let permitidas = [];
+
+      categorias.forEach(cat => {
+        if (cat.includes("MIRIM") && ano >= 2012 && ano <= 2015) permitidas.push(cat);
+        if (cat.includes("INFANTIL") && ano >= 2010 && ano <= 2012) permitidas.push(cat);
+        if (cat.includes("INFANTO") && ano >= 2008 && ano <= 2010) permitidas.push(cat);
+      });
+
+      return permitidas;
     }
 
     function collectData() {
