@@ -10,7 +10,7 @@
     .card{ background:#111827; border-radius:12px; padding:16px; margin-bottom:16px; }
     h1,h2{ margin:0 0 12px 0; }
     label{ display:block; margin:6px 0; color:#94a3b8; }
-    input, select{ width:100%; padding:8px; border-radius:8px; border:1px solid #1f2937; background:#0b1020; color:#e5e7eb; }
+    input, select{ width:100%; padding:8px; border-radius:8px; border:1px solid #1f2937; background:#0b1020; color:#e5e7eb; box-sizing: border-box; }
     .row{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
     .btn{ padding:10px 14px; border:none; border-radius:8px; cursor:pointer; margin-top:8px; }
     .btn-primary{ background:#22d3ee; color:#021015; font-weight:700; }
@@ -107,9 +107,6 @@
   </template>
 
   <script>
-    const WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbxUvGDIWS00gJHA_KXz52oJGHVANS1v8TpXaVr0UC2oa7fQsXq-cvsX2ivYDp9ARvVDhA/exec";
-
     const SCHOOLS = {
       "COLÉGIO MADRE FRANCISCA LAMPEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO"],
       "COLÉGIO UNI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
@@ -137,7 +134,7 @@
     const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 
     const studentTpl = $("#studentTemplate");
-    const schoolSel   = $("#school");
+    const schoolSel  = $("#school");
 
     // Preenche escolas
     Object.keys(SCHOOLS).forEach(name => {
@@ -155,31 +152,72 @@
       showReview(data);
     };
     $("#cancelReview").onclick  = () => $("#reviewModal").style.display = "none";
+
+    // ==================================================================
+    // === CÓDIGO DE ENVIO PARA O AIRTABLE - JÁ CONFIGURADO PARA VOCÊ ===
+    // ==================================================================
     $("#confirmReview").onclick = () => {
       const data = collectData();
       if (!data) return;
 
-      fetch(WEBAPP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-      .then(res => res.json())
-      .then(res => {
-        $("#reviewModal").style.display = "none";
+      const AIRTABLE_PERSONAL_ACCESS_TOKEN = "patbILwJvHs0SrRGY.b34d40662e3177938fad31bf1281a4d903fc7454870d15b404770de678162e34";
+      const AIRTABLE_BASE_ID = "app3zyXa9UhxQ0CVD";
+      const AIRTABLE_TABLE_NAME = "Inscrições";
 
-        if (res.status === "sucesso") {
-          alert(res.mensagem || "Inscrição enviada com sucesso!");
-          location.reload();
-        } else {
-          alert("Erros:\n" + (res.mensagens || []).join("\n"));
+      const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`;
+
+      const records = data.students.map(student => ({
+        fields: {
+          "Escola": data.school,
+          "Professor": data.teacher,
+          "Email": data.email,
+          "Telefone": data.phone,
+          "Nome do Aluno": student.name,
+          "Nascimento": student.dob,
+          "Documento": student.doc,
+          "Gênero": student.gender,
+          "Categoria": student.category,
+          "Prova 1": student.prova1,
+          "Prova 2": student.prova2,
+          "Revezamento": student.relay
         }
+      }));
+
+      // Adiciona um feedback visual para o usuário
+      $("#confirmReview").textContent = 'Enviando...';
+      $("#confirmReview").disabled = true;
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ records }),
+      })
+      .then(res => {
+        if (!res.ok) {
+           return res.json().then(error => { throw new Error(JSON.stringify(error)) });
+        }
+        return res.json();
+      })
+      .then(result => {
+        console.log("Sucesso:", result);
+        $("#reviewModal").style.display = "none";
+        alert("Inscrição enviada com sucesso!");
+        location.reload();
       })
       .catch(err => {
         $("#reviewModal").style.display = "none";
-        alert("Erro ao enviar: " + err.message);
+        alert("Erro ao enviar: " + err.message + "\n\nVerifique se os nomes das colunas no Airtable estão corretos e tente novamente.");
+        // Reabilita o botão em caso de erro
+        $("#confirmReview").textContent = 'Confirmar e Enviar';
+        $("#confirmReview").disabled = false;
       });
     };
+    // ==================================================================
+    // === FIM DO CÓDIGO DE ENVIO PARA O AIRTABLE =======================
+    // ==================================================================
 
     function addStudent() {
       const node = studentTpl.content.firstElementChild.cloneNode(true);
@@ -192,7 +230,6 @@
       const selRelay    = $(".sel-relay", node);
       const inpDob      = $(".inp-dob", node);
 
-      // 🔹 Atualiza categorias ao mudar data de nascimento ou gênero
       inpDob.onchange = atualizarCategorias;
       selGender.onchange = atualizarCategorias;
 
@@ -220,7 +257,6 @@
         revezamentos.forEach(r => selRelay.innerHTML += `<option>${r}</option>`);
       };
 
-      // Evita duplicar prova1/prova2 no mesmo aluno
       [selEvent1, selEvent2].forEach(current => {
         const other = current === selEvent1 ? selEvent2 : selEvent1;
         current.onchange = () => {
@@ -228,7 +264,6 @@
           if (val && other.value === val) {
             alert("Este aluno já escolheu essa prova no outro campo.");
             current.value = "";
-            return;
           }
         };
       });
@@ -236,18 +271,25 @@
       $("#students").appendChild(node);
     }
 
-    // 🔹 Função que aplica regra idade ↔ categoria
     function filtrarCategoriasPorAno(ano, genero, escola) {
       let categorias = SCHOOLS[escola] || [];
       let permitidas = [];
-
+      const anoAtual = new Date().getFullYear();
+      const idade = anoAtual - ano;
+      
+      // Lógica de idade pode precisar de ajuste fino. Exemplo:
+      // Mirim: 11-13 anos
+      // Infantil: 14-15 anos
+      // Infanto: 16-17 anos
+      // Vou manter a sua lógica original baseada no ano de nascimento
       categorias.forEach(cat => {
         if (cat.includes("MIRIM") && ano >= 2012 && ano <= 2015) permitidas.push(cat);
         if (cat.includes("INFANTIL") && ano >= 2010 && ano <= 2012) permitidas.push(cat);
         if (cat.includes("INFANTO") && ano >= 2008 && ano <= 2010) permitidas.push(cat);
       });
 
-      return permitidas;
+      // Filtra por gênero também
+      return permitidas.filter(cat => cat.toUpperCase().includes(genero.toUpperCase()));
     }
 
     function collectData() {
@@ -258,6 +300,11 @@
       const phone   = $("#phone").value;
       const students = [];
       let valid = true;
+      
+      if(!teacher || !email || !phone) {
+        alert("Preencha todos os dados de identificação da Unidade de Ensino.");
+        return null;
+      }
 
       $$(".student").forEach(c => {
         const st = {
@@ -266,9 +313,9 @@
           doc:      $(".inp-doc",  c).value,
           gender:   $(".sel-gender",  c).value,
           category: $(".sel-category", c).value,
-          prova1:   $(".sel-event1",  c).value,
-          prova2:   $(".sel-event2",  c).value,
-          relay:    $(".sel-relay",   c).value
+          prova1:   $(".sel-event1",  c).value || "", // Garante que envie string vazia se não selecionado
+          prova2:   $(".sel-event2",  c).value || "",
+          relay:    $(".sel-relay",   c).value || ""
         };
         if (!st.name || !st.dob || !st.doc || !st.gender || !st.category) {
           valid = false;
@@ -276,8 +323,13 @@
         students.push(st);
       });
 
+      if ($$(".student").length === 0) {
+        alert("Adicione pelo menos um aluno à inscrição.");
+        return null;
+      }
+
       if (!valid) {
-        alert("Preencha todos os campos dos alunos.");
+        alert("Preencha todos os campos obrigatórios dos alunos (Nome, Nascimento, Documento, Gênero e Categoria).");
         return null;
       }
       return { school, teacher, email, phone, students };
@@ -306,7 +358,7 @@
           <tr>
             <td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td>
             <td>${s.gender}</td><td>${s.category}</td>
-            <td>${s.prova1}</td><td>${s.prova2}</td><td>${s.relay}</td>
+            <td>${s.prova1 || "N/A"}</td><td>${s.prova2 || "N/A"}</td><td>${s.relay || "N/A"}</td>
           </tr>
         `;
       });
