@@ -1,220 +1,409 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Inscrição Atletismo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inscrição – Jogos Escolares (Atletismo)</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .student { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
-    label { display: block; margin-top: 5px; }
-    input, select { width: 100%; padding: 5px; margin: 2px 0 10px; }
-    button { padding: 10px 15px; margin-top: 10px; cursor: pointer; }
+    body { background:#0f172a; color:#e5e7eb; font-family:system-ui; margin:0; }
+    .container{ max-width:900px; margin:20px auto; padding:16px; }
+    .card{ background:#111827; border-radius:12px; padding:16px; margin-bottom:16px; }
+    h1,h2{ margin:0 0 12px 0; }
+    label{ display:block; margin:6px 0; color:#94a3b8; }
+    input, select{ width:100%; padding:8px; border-radius:8px; border:1px solid #1f2937; background:#0b1020; color:#e5e7eb; box-sizing: border-box; }
+    .row{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
+    .btn{ padding:10px 14px; border:none; border-radius:8px; cursor:pointer; margin-top:8px; }
+    .btn-primary{ background:#22d3ee; color:#021015; font-weight:700; }
+    .btn-danger{ background:#fb7185; color:#160709; font-weight:700; }
+    .modal{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; z-index: 1000;}
+    .modal-content{ background:#1e293b; padding:20px; border-radius:12px; max-width:800px; width:90%; max-height:80vh; overflow:auto; }
+    table{ width:100%; border-collapse:collapse; margin-top:12px; }
+    th,td{ border:1px solid #334155; padding:6px; font-size:.9rem; text-align:left; }
+    .hidden-fields { display: none; }
+    .radio-group label { display: inline-block; margin-right: 15px; }
+    .radio-group input { width: auto; }
   </style>
 </head>
 <body>
-  <h2>Formulário de Inscrição - Atletismo</h2>
+  <div class="container">
+    <div class="card">
+      <h1>Inscrição – Atletismo • Jogos Escolares</h1>
+      <p id="info-convencional">
+        <b>Convencional:</b> Cada aluno até <b>2 provas individuais</b> + <b>1 revezamento</b>.<br>
+        Cada escola até <b>2 atletas/prova/gênero</b> + <b>1 equipe de revezamento</b>.
+      </p>
+       <p id="info-paradesporto" style="display:none;">
+        <b>Paradesporto:</b> Cada aluno até <b>3 provas individuais</b>. Inscrições livres por escola.
+      </p>
+    </div>
 
-  <label>Escola:</label>
-  <select id="school">
-    <option value="">Selecione...</option>
-    <option>Escola A</option>
-    <option>Escola B</option>
-    <option>Escola C</option>
-  </select>
+    <div class="card">
+      <h2>1) Identificação da Unidade de Ensino</h2>
+      <div class="row">
+        <div>
+          <label>Unidade de Ensino</label>
+          <select id="school" required>
+            <option value="">Selecione…</option>
+          </select>
+        </div>
+        <div>
+          <label>Professor Responsável</label>
+          <input id="teacher" type="text" required />
+        </div>
+        <div>
+          <label>Email</label>
+          <input id="email" type="email" required />
+        </div>
+        <div>
+          <label>Telefone</label>
+          <input id="phone" type="tel" required />
+        </div>
+      </div>
+    </div>
 
-  <label>Professor Responsável:</label>
-  <input type="text" id="teacher">
+    <div class="card">
+      <h2>2) Inscrição de Alunos</h2>
+      <div id="students"></div>
+      <button class="btn btn-primary" id="addStudentBtn" type="button">+ Adicionar aluno</button>
+    </div>
 
-  <label>Email:</label>
-  <input type="email" id="email">
+    <div class="card">
+      <button class="btn btn-primary" id="reviewBtn" type="button">Revisar inscrição</button>
+    </div>
+  </div>
 
-  <label>Telefone:</label>
-  <input type="text" id="phone">
+  <div class="modal" id="reviewModal">
+    <div class="modal-content">
+      <h2>Revisão da Inscrição</h2>
+      <div id="reviewContent"></div>
+      <div style="margin-top:12px; text-align:right;">
+        <button class="btn btn-danger" id="cancelReview">Cancelar</button>
+        <button class="btn btn-primary" id="confirmReview">Confirmar e Enviar</button>
+      </div>
+    </div>
+  </div>
 
-  <label>Modalidade:</label>
-  <select id="mode" onchange="toggleMode()">
-    <option value="convencional">Convencional</option>
-    <option value="paradesporto">Paradesporto</option>
-  </select>
+  <template id="studentTemplate">
+    <div class="card student">
+      <div class="row">
+        <div><label>Nome</label><input type="text" class="inp-name" required></div>
+        <div><label>Data de Nascimento</label><input type="date" class="inp-dob" required></div>
+        <div><label>Documento</label><input type="text" class="inp-doc" required></div>
+        <div>
+          <label>Gênero</label>
+          <select class="sel-gender" required>
+            <option value="">Selecione…</option>
+            <option value="MASCULINO">Masculino</option>
+            <option value="FEMININO">Feminino</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+            <label>Modalidade</label>
+            <div class="radio-group">
+                <label><input type="radio" name="modalidade" value="Convencional" checked class="sel-modality"> Convencional</label>
+                <label><input type="radio" name="modalidade" value="Paradesporto" class="sel-modality"> Paradesporto</label>
+            </div>
+        </div>
+        <div>
+          <label>Categoria</label>
+          <select class="sel-category" required></select>
+        </div>
+        <div class="paradesporto-fields hidden-fields">
+          <label>Classificação Funcional</label>
+          <select class="sel-classification"></select>
+        </div>
+      </div>
+      
+      <div class="row conventional-events">
+        <div><label>Prova 1</label><select class="sel-event1"></select></div>
+        <div><label>Prova 2</label><select class="sel-event2"></select></div>
+        <div><label>Revezamento</label><select class="sel-relay"></select></div>
+      </div>
 
-  <div id="students"></div>
-  <button type="button" onclick="addStudent()">Adicionar Aluno</button>
-  <br><br>
-  <button type="button" onclick="submitForm()">Enviar Inscrição</button>
+      <div class="row paradesporto-events hidden-fields">
+        <div><label>Prova 1</label><select class="sel-event1-para"></select></div>
+        <div><label>Prova 2</label><select class="sel-event2-para"></select></div>
+        <div><label>Prova 3</label><select class="sel-event3-para"></select></div>
+      </div>
+
+      <button class="btn btn-danger btnRemove" type="button" style="margin-top: 16px;">Remover</button>
+    </div>
+  </template>
 
   <script>
-    // Configurações Airtable
-    const apiKey = "SUA_APIKEY_AQUI";
-    const baseId = "SEU_BASEID_AQUI";
-    const tableName = "Inscricoes";
-    const apiUrl = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+    const SCHOOLS = {
+      "COLÉGIO MADRE FRANCISCA LAMPEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO"],
+      "COLÉGIO UNI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB DOLORES L. S. KRAUSS": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB FERANDINO DAGNONI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB FREI GODOFREDO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB FREI POLICARPO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB HONÓRIO MIRANDA": ["INFANTIL MASCULINO","INFANTO MASCULINO"],
+      "EEB IVO D´ÁQUINO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB LUIZ FRANZÓI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB MARINA VIEIRA LEAL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
+      "EEB NORMA MÔNICA SABEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "EEB PROF OLÍMPIO MORETTO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
+      "IFSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
+    };
 
-    function isParadesporto() {
-      return document.getElementById("mode").value === "paradesporto";
-    }
+    // --- NOVAS REGRAS PARA AS PROVAS ---
+    const provasConvencional = {
+      "MIRIM": ["75m", "200m", "400m", "Arremesso de Peso", "Salto em Altura", "Salto em Distância"],
+      "INFANTIL": ["75m", "200m", "600m", "Arremesso de Peso", "Salto em Altura", "Salto em Distância"],
+      "INFANTO": ["75m", "200m", "800m", "Arremesso de Peso", "Salto em Altura", "Salto em Distância"]
+    };
+    const revezamentosConvencional = {
+        "MIRIM": ["Revezamento 4x50m"],
+        "INFANTIL": ["Revezamento 4x100m"],
+        "INFANTO": ["Revezamento 4x100m"]
+    };
+    const provasParadesporto = {
+      "MIRIM": ["50m", "Arremesso de Pelota", "Salto em Distância"],
+      "INFANTIL": ["75m", "Arremesso de Peso", "Salto em Distância"],
+      "INFANTO": ["200m", "Arremesso de Peso", "Salto em Distância"]
+    };
+    const classificacoesFuncionais = ["AUDITIVA", "FÍSICA", "INTELECTUAL", "VISUAL", "SINDROME DE DOWN", "TRANSTORNO DO ESPECTRO AUTISTA", "OUTRA/NÃO SEI"];
 
-    function toggleMode() {
-      document.getElementById("students").innerHTML = "";
-    }
+    const $  = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+    const studentTpl = $("#studentTemplate");
+    const schoolSel  = $("#school");
+
+    Object.keys(SCHOOLS).forEach(name => {
+      const o = document.createElement("option");
+      o.value = name;
+      o.textContent = name;
+      schoolSel.appendChild(o);
+    });
+
+    $("#addStudentBtn").onclick = addStudent;
+    $("#reviewBtn").onclick = () => {
+      const data = collectData();
+      if (!data) return;
+      showReview(data);
+    };
+    $("#cancelReview").onclick  = () => $("#reviewModal").style.display = "none";
+
+    $("#confirmReview").onclick = () => {
+      const data = collectData();
+      if (!data) return;
+
+      const AIRTABLE_PERSONAL_ACCESS_TOKEN = "patbILwJvHs0SrRGY.b34d40662e3177938fad31bf1281a4d903fc7454870d15b404770de678162e34";
+      const AIRTABLE_BASE_ID = "app3zyXa9UhxQ0CVD";
+      const AIRTABLE_TABLE_NAME = "Inscrições";
+      const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`;
+
+      const records = data.students.map(student => ({
+        fields: {
+          "Escola": data.school, "Professor": data.teacher, "Email": data.email, "Telefone": data.phone,
+          "Nome do Aluno": student.name, "Nascimento": student.dob, "Documento": student.doc, "Gênero": student.gender,
+          "Modalidade": student.modality,
+          "Categoria": student.category,
+          "Classificacao Funcional": student.classification,
+          "Prova 1": student.prova1,
+          "Prova 2": student.prova2,
+          "Prova 3": student.prova3,
+          "Revezamento": student.relay
+        }
+      }));
+
+      $("#confirmReview").textContent = 'Enviando...';
+      $("#confirmReview").disabled = true;
+
+      fetch(url, {
+        method: "POST", headers: { "Authorization": `Bearer ${AIRTABLE_PERSONAL_ACCESS_TOKEN}`, "Content-Type": "application/json", },
+        body: JSON.stringify({ records }),
+      })
+      .then(res => {
+        if (!res.ok) { return res.json().then(error => { throw new Error(JSON.stringify(error)) }); }
+        return res.json();
+      })
+      .then(result => {
+        $("#reviewModal").style.display = "none";
+        alert("Inscrição enviada com sucesso!");
+        location.reload();
+      })
+      .catch(err => {
+        $("#reviewModal").style.display = "none";
+        alert("Erro ao enviar: " + err.message + "\n\nVerifique se os nomes das colunas no Airtable estão corretos (ex: 'Classificacao Funcional', 'Prova 3') e tente novamente.");
+        $("#confirmReview").textContent = 'Confirmar e Enviar';
+        $("#confirmReview").disabled = false;
+      });
+    };
 
     function addStudent() {
-      const container = document.createElement("div");
-      container.className = "student";
-      container.innerHTML = `
-        <label>Nome do Aluno:</label>
-        <input type="text" class="inp-name">
+      const node = studentTpl.content.firstElementChild.cloneNode(true);
+      const uniqueId = "modality_" + Date.now() + Math.random();
+      $$(".sel-modality", node).forEach(radio => radio.name = uniqueId);
 
-        <label>Data de Nascimento:</label>
-        <input type="date" class="inp-dob">
+      $(".btnRemove", node).onclick = () => node.remove();
 
-        <label>Documento:</label>
-        <input type="text" class="inp-doc">
+      const inpDob      = $(".inp-dob", node);
+      const selGender   = $(".sel-gender", node);
+      const selCategory = $(".sel-category", node);
+      const selClassification = $(".sel-classification", node);
 
-        <label>Gênero:</label>
-        <select class="sel-gender">
-          <option value="">Selecione...</option>
-          <option>Masculino</option>
-          <option>Feminino</option>
-        </select>
+      // Preenche a classificação funcional
+      selClassification.innerHTML = `<option value="">Selecione…</option>`;
+      classificacoesFuncionais.forEach(c => selClassification.innerHTML += `<option value="${c}">${c}</option>`);
 
-        <label>Categoria:</label>
-        <select class="sel-category">
-          <option value="">Selecione...</option>
-          <option>Sub-14</option>
-          <option>Sub-16</option>
-          <option>Sub-18</option>
-        </select>
+      const updateVisibilityAndEvents = () => {
+        const modality = $(".sel-modality:checked", node).value;
+        const isConventional = modality === 'Convencional';
+        
+        $(".conventional-events", node).classList.toggle('hidden-fields', !isConventional);
+        $(".paradesporto-events", node).classList.toggle('hidden-fields', isConventional);
+        $(".paradesporto-fields", node).classList.toggle('hidden-fields', isConventional);
+        
+        // Atualiza as descrições principais
+        $("#info-convencional").style.display = isConventional ? 'block' : 'none';
+        $("#info-paradesporto").style.display = isConventional ? 'none' : 'block';
 
-        <label>Prova 1:</label>
-        <select class="sel-event1">
-          <option value="">Selecione...</option>
-          <option>100m</option>
-          <option>200m</option>
-          <option>Salto em distância</option>
-        </select>
+        atualizarProvas(node);
+      };
 
-        <label>Prova 2:</label>
-        <select class="sel-event2">
-          <option value="">Selecione...</option>
-          <option>100m</option>
-          <option>200m</option>
-          <option>Salto em distância</option>
-        </select>
+      $$(".sel-modality", node).forEach(radio => radio.onchange = updateVisibilityAndEvents);
+      inpDob.onchange = () => atualizarCategorias(node);
+      selGender.onchange = () => atualizarCategorias(node);
+      selCategory.onchange = () => atualizarProvas(node);
 
-        ${isParadesporto() ? `
-          <label>Classificação:</label>
-          <input type="text" class="sel-classification">
-        ` : `
-          <label>Revezamento:</label>
-          <select class="sel-relay">
-            <option value="">Nenhum</option>
-            <option>4x100m</option>
-            <option>4x400m</option>
-          </select>
-        `}
-      `;
-      document.getElementById("students").appendChild(container);
+      $("#students").appendChild(node);
+    }
+
+    function atualizarCategorias(node) {
+      const selCategory = $(".sel-category", node);
+      const inpDob = $(".inp-dob", node).value;
+      const selGender = $(".sel-gender", node).value;
+      
+      selCategory.innerHTML = `<option value="">Selecione…</option>`;
+      if (schoolSel.value && selGender && inpDob) {
+        const ano = new Date(inpDob).getFullYear();
+        let categorias = SCHOOLS[schoolSel.value] || [];
+        let permitidas = [];
+        
+        categorias.forEach(cat => {
+          if (cat.includes("MIRIM") && ano >= 2012 && ano <= 2015) permitidas.push(cat);
+          if (cat.includes("INFANTIL") && ano >= 2010 && ano <= 2012) permitidas.push(cat);
+          if (cat.includes("INFANTO") && ano >= 2008 && ano <= 2010) permitidas.push(cat);
+        });
+
+        const categoriasFiltradas = permitidas.filter(cat => cat.toUpperCase().includes(selGender.toUpperCase()));
+        categoriasFiltradas.forEach(cat => {
+          selCategory.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+        
+        atualizarProvas(node);
+      }
+    }
+
+    function atualizarProvas(node) {
+      const modality = $(".sel-modality:checked", node).value;
+      const categoryKey = ($(".sel-category", node).value || "").split(" ")[0];
+      
+      if(modality === 'Convencional') {
+        const provas = provasConvencional[categoryKey] || [];
+        const revezamentos = revezamentosConvencional[categoryKey] || [];
+        const selEvent1 = $(".sel-event1", node);
+        const selEvent2 = $(".sel-event2", node);
+        const selRelay = $(".sel-relay", node);
+        
+        populateSelect(selEvent1, provas, "Selecione…");
+        populateSelect(selEvent2, provas, "Selecione…");
+        populateSelect(selRelay, revezamentos, "Não participa");
+        
+        setupDuplicateCheck([selEvent1, selEvent2]);
+
+      } else { // Paradesporto
+        const provas = provasParadesporto[categoryKey] || [];
+        const selEvent1 = $(".sel-event1-para", node);
+        const selEvent2 = $(".sel-event2-para", node);
+        const selEvent3 = $(".sel-event3-para", node);
+        
+        populateSelect(selEvent1, provas, "Selecione…");
+        populateSelect(selEvent2, provas, "Selecione…");
+        populateSelect(selEvent3, provas, "Selecione…");
+        
+        setupDuplicateCheck([selEvent1, selEvent2, selEvent3]);
+      }
+    }
+    
+    function populateSelect(selectElement, options, defaultOption) {
+        selectElement.innerHTML = `<option value="">${defaultOption}</option>`;
+        options.forEach(opt => selectElement.innerHTML += `<option value="${opt}">${opt}</option>`);
+    }
+
+    function setupDuplicateCheck(selects) {
+        selects.forEach(currentSelect => {
+            currentSelect.onchange = () => {
+                const currentValue = currentSelect.value;
+                if (!currentValue) return;
+                
+                for (const otherSelect of selects) {
+                    if (otherSelect !== currentSelect && otherSelect.value === currentValue) {
+                        alert("Este aluno já foi inscrito nesta prova.");
+                        currentSelect.value = "";
+                        break;
+                    }
+                }
+            };
+        });
     }
 
     function collectData() {
-      const schoolSel = document.getElementById("school");
-      const school = schoolSel.value;
-      if (!school) { alert("Selecione a escola."); return null; }
-
-      const teacher = document.getElementById("teacher").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
+      if (!schoolSel.value || !$("#teacher").value || !$("#email").value || !$("#phone").value) {
+        alert("Preencha todos os dados de identificação da Unidade de Ensino.");
+        return null;
+      }
+      if ($$(".student").length === 0) {
+        alert("Adicione pelo menos um aluno à inscrição.");
+        return null;
+      }
 
       const students = [];
       let valid = true;
-
-      document.querySelectorAll(".student").forEach(c => {
+      $$(".student").forEach(c => {
+        const modality = $(".sel-modality:checked", c).value;
         const st = {
-          "Escola": school,
-          "Professor": teacher,
-          "Email": email,
-          "Telefone": phone,
-          "Nome Do Aluno": c.querySelector(".inp-name").value,
-          "Nascimento": c.querySelector(".inp-dob").value,
-          "Documento": c.querySelector(".inp-doc").value,
-          "Gênero": c.querySelector(".sel-gender").value,
-          "Categoria": c.querySelector(".sel-category").value,
-          "Prova 1": c.querySelector(".sel-event1").value,
-          "Prova 2": c.querySelector(".sel-event2").value,
-          "Revezamento": isParadesporto() ? "" : c.querySelector(".sel-relay").value,
-          "Classificacao": isParadesporto() ? c.querySelector(".sel-classification").value : ""
+          name: $(".inp-name", c).value, dob: $(".inp-dob", c).value, doc: $(".inp-doc", c).value,
+          gender: $(".sel-gender", c).value, category: $(".sel-category", c).value, modality: modality,
+          classification: modality === 'Paradesporto' ? $(".sel-classification", c).value : '',
+          prova1: modality === 'Convencional' ? $(".sel-event1", c).value : $(".sel-event1-para", c).value,
+          prova2: modality === 'Convencional' ? $(".sel-event2", c).value : $(".sel-event2-para", c).value,
+          prova3: modality === 'Paradesporto' ? $(".sel-event3-para", c).value : '',
+          relay: modality === 'Convencional' ? $(".sel-relay", c).value : ''
         };
-
-        if (!st["Nome Do Aluno"] || !st["Nascimento"] || !st["Documento"] || !st["Gênero"] || !st["Categoria"]) valid = false;
-        if (isParadesporto() && !st["Classificacao"]) valid = false;
-
-        const provasEscolhidas = [st["Prova 1"], st["Prova 2"]].filter(Boolean);
-        if (isParadesporto()) {
-          if (provasEscolhidas.length > 3) { alert(`Aluno ${st["Nome Do Aluno"]}: máx. 3 provas.`); valid = false; }
-        } else {
-          const totalIndiv = provasEscolhidas.length;
-          const totalRelay = st["Revezamento"] ? 1 : 0;
-          if (totalIndiv > 2 || totalRelay > 1) {
-            alert(`Aluno ${st["Nome Do Aluno"]}: no Convencional só pode 2 provas + 1 revezamento.`);
-            valid = false;
-          }
+        if (!st.name || !st.dob || !st.doc || !st.gender || !st.category || (st.modality === 'Paradesporto' && !st.classification)) {
+          valid = false;
         }
         students.push(st);
       });
 
-      if (!valid) return null;
-
-      // Valida limites no Convencional
-      if (!isParadesporto()) {
-        const contador = {};
-        students.forEach(st => {
-          const keyCat = st["Categoria"];
-          [st["Prova 1"], st["Prova 2"]].forEach(p => {
-            if (p) {
-              const chave = `${keyCat}|${st["Gênero"]}|${p}`;
-              contador[chave] = (contador[chave] || 0) + 1;
-            }
-          });
-          if (st["Revezamento"]) {
-            const chave = `${keyCat}|${st["Gênero"]}|${st["Revezamento"]}`;
-            contador[chave] = (contador[chave] || 0) + 1;
-          }
-        });
-
-        for (let chave in contador) {
-          if (chave.includes("4x")) {
-            if (contador[chave] > 4) { alert(`Limite excedido: só 4 atletas no ${chave}.`); return null; }
-          } else {
-            if (contador[chave] > 2) { alert(`Limite excedido: só 2 atletas por prova/gênero/categoria (${chave}).`); return null; }
-          }
-        }
+      if (!valid) {
+        alert("Preencha todos os campos obrigatórios dos alunos (Nome, Nascimento, Documento, Gênero, Categoria e Classificação Funcional, se aplicável).");
+        return null;
       }
-
-      return students;
+      return { school: schoolSel.value, teacher: $("#teacher").value, email: $("#email").value, phone: $("#phone").value, students };
     }
 
-    async function submitForm() {
-      const data = collectData();
-      if (!data) return;
-
-      try {
-        for (let st of data) {
-          const record = { fields: st };
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${apiKey}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(record)
-          });
-          if (!response.ok) throw new Error("Erro ao enviar dados.");
-        }
-        alert("Inscrição enviada com sucesso!");
-        document.getElementById("students").innerHTML = "";
-      } catch (err) {
-        alert("Erro: " + err.message);
-      }
+    function showReview(data) {
+      let html = `<p><b>Escola:</b> ${data.school}<br><b>Professor:</b> ${data.teacher}<br><b>Email:</b> ${data.email}<br><b>Telefone:</b> ${data.phone}</p>
+        <table><thead><tr>
+          <th>Nome</th><th>Nasc.</th><th>Modalidade</th><th>Categoria</th><th>Classificação</th>
+          <th>Prova 1</th><th>Prova 2</th><th>Prova 3</th><th>Revez.</th>
+        </tr></thead><tbody>`;
+        
+      data.students.forEach(s => {
+        html += `<tr>
+            <td>${s.name}</td><td>${s.dob}</td><td>${s.modality}</td><td>${s.category}</td><td>${s.classification || "N/A"}</td>
+            <td>${s.prova1 || "N/A"}</td><td>${s.prova2 || "N/A"}</td><td>${s.prova3 || "N/A"}</td><td>${s.relay || "N/A"}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      $("#reviewContent").innerHTML = html;
+      $("#reviewModal").style.display = "flex";
     }
   </script>
 </body>
