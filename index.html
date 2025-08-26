@@ -11,7 +11,7 @@
     h1,h2{ margin:0 0 12px 0; }
     label{ display:block; margin:6px 0; color:#94a3b8; }
     input, select{ width:100%; padding:8px; border-radius:8px; border:1px solid #1f2937; background:#0b1020; color:#e5e7eb; box-sizing: border-box; }
-    .row{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
+    .row{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top: 12px; }
     .btn{ padding:10px 14px; border:none; border-radius:8px; cursor:pointer; margin-top:8px; }
     .btn-primary{ background:#22d3ee; color:#021015; font-weight:700; }
     .btn-danger{ background:#fb7185; color:#160709; font-weight:700; }
@@ -39,7 +39,7 @@
 
     <div class="card">
       <h2>1) Identificação da Unidade de Ensino</h2>
-      <div class="row">
+      <div class="row" style="margin-top:0;">
         <div>
           <label>Unidade de Ensino</label>
           <select id="school" required>
@@ -85,7 +85,7 @@
 
   <template id="studentTemplate">
     <div class="card student">
-      <div class="row">
+      <div class="row" style="margin-top:0;">
         <div><label>Nome</label><input type="text" class="inp-name" required></div>
         <div><label>Data de Nascimento</label><input type="date" class="inp-dob" required></div>
         <div><label>Documento</label><input type="text" class="inp-doc" required></div>
@@ -98,6 +98,7 @@
           </select>
         </div>
       </div>
+      
       <div class="row">
         <div>
             <label>Modalidade</label>
@@ -106,6 +107,9 @@
                 <label><input type="radio" name="modalidade" value="Paradesporto" class="sel-modality"> Paradesporto</label>
             </div>
         </div>
+      </div>
+      
+      <div class="row">
         <div>
           <label>Categoria</label>
           <select class="sel-category" required></select>
@@ -149,7 +153,6 @@
       "IFSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
     };
 
-    // --- NOVAS REGRAS PARA AS PROVAS ---
     const provasConvencional = {
       "MIRIM": ["75m", "200m", "400m", "Arremesso de Peso", "Salto em Altura", "Salto em Distância"],
       "INFANTIL": ["75m", "200m", "600m", "Arremesso de Peso", "Salto em Altura", "Salto em Distância"],
@@ -246,7 +249,6 @@
       const selCategory = $(".sel-category", node);
       const selClassification = $(".sel-classification", node);
 
-      // Preenche a classificação funcional
       selClassification.innerHTML = `<option value="">Selecione…</option>`;
       classificacoesFuncionais.forEach(c => selClassification.innerHTML += `<option value="${c}">${c}</option>`);
 
@@ -258,9 +260,11 @@
         $(".paradesporto-events", node).classList.toggle('hidden-fields', isConventional);
         $(".paradesporto-fields", node).classList.toggle('hidden-fields', isConventional);
         
-        // Atualiza as descrições principais
-        $("#info-convencional").style.display = isConventional ? 'block' : 'none';
-        $("#info-paradesporto").style.display = isConventional ? 'none' : 'block';
+        const hasParadesportoStudents = $$(".student").some(s => $(".sel-modality:checked", s).value === 'Paradesporto');
+        const hasConvencionalStudents = $$(".student").some(s => $(".sel-modality:checked", s).value === 'Convencional');
+
+        $("#info-convencional").style.display = hasConvencionalStudents ? 'block' : 'none';
+        $("#info-paradesporto").style.display = hasParadesportoStudents ? 'block' : 'none';
 
         atualizarProvas(node);
       };
@@ -278,6 +282,7 @@
       const inpDob = $(".inp-dob", node).value;
       const selGender = $(".sel-gender", node).value;
       
+      let valorAntigo = selCategory.value;
       selCategory.innerHTML = `<option value="">Selecione…</option>`;
       if (schoolSel.value && selGender && inpDob) {
         const ano = new Date(inpDob).getFullYear();
@@ -295,6 +300,10 @@
           selCategory.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
         
+        if (categoriasFiltradas.includes(valorAntigo)) {
+          selCategory.value = valorAntigo;
+        }
+
         atualizarProvas(node);
       }
     }
