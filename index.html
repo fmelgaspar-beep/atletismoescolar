@@ -285,10 +285,16 @@
       let valorAntigo = selCategory.value;
       selCategory.innerHTML = `<option value="">Selecione…</option>`;
       if (schoolSel.value && selGender && inpDob) {
-        const ano = new Date(inpDob).getFullYear();
+        // ==================================================================
+        // === CORREÇÃO APLICADA AQUI =======================================
+        // ==================================================================
+        // Pega o ano diretamente da string para evitar problemas com fuso horário
+        const ano = parseInt(inpDob.substring(0, 4));
+        
         let categorias = SCHOOLS[schoolSel.value] || [];
         let permitidas = [];
         
+        // A lógica abaixo permite que um ano (como 2012) se enquadre em mais de uma categoria
         categorias.forEach(cat => {
           if (cat.includes("MIRIM") && ano >= 2012 && ano <= 2015) permitidas.push(cat);
           if (cat.includes("INFANTIL") && ano >= 2010 && ano <= 2012) permitidas.push(cat);
@@ -300,6 +306,7 @@
           selCategory.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
         
+        // Se a categoria antiga ainda for válida, mantém selecionada
         if (categoriasFiltradas.includes(valorAntigo)) {
           selCategory.value = valorAntigo;
         }
