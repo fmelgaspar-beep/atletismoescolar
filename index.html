@@ -1,370 +1,220 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Inscrição – Jogos Escolares (Atletismo)</title>
+  <meta charset="UTF-8">
+  <title>Inscrição Atletismo</title>
   <style>
-    body { background:#0f172a; color:#e5e7eb; font-family:system-ui; margin:0; }
-    .container{ max-width:900px; margin:20px auto; padding:16px; }
-    .card{ background:#111827; border-radius:12px; padding:16px; margin-bottom:16px; }
-    h1,h2{ margin:0 0 12px 0; }
-    label{ display:block; margin:6px 0; color:#94a3b8; }
-    input, select{ width:100%; padding:8px; border-radius:8px; border:1px solid #1f2937; background:#0b1020; color:#e5e7eb; box-sizing: border-box; }
-    .row{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
-    .btn{ padding:10px 14px; border:none; border-radius:8px; cursor:pointer; margin-top:8px; }
-    .btn-primary{ background:#22d3ee; color:#021015; font-weight:700; }
-    .btn-danger{ background:#fb7185; color:#160709; font-weight:700; }
-    .modal{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; }
-    .modal-content{ background:#1e293b; padding:20px; border-radius:12px; max-width:800px; width:90%; max-height:80vh; overflow:auto; }
-    table{ width:100%; border-collapse:collapse; margin-top:12px; }
-    th,td{ border:1px solid #334155; padding:6px; font-size:.9rem; text-align:left; }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .student { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+    label { display: block; margin-top: 5px; }
+    input, select { width: 100%; padding: 5px; margin: 2px 0 10px; }
+    button { padding: 10px 15px; margin-top: 10px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h1>Inscrição – Atletismo Convencional • Jogos Escolares</h1>
-      <p>
-        Cada aluno: até <b>2 provas individuais</b> + <b>1 revezamento</b>.<br>
-        Cada escola: até <b>2 atletas/prova/gênero</b> + <b>1 equipe de revezamento</b>
-        (4 atletas) por categoria/gênero.
-      </p>
-    </div>
+  <h2>Formulário de Inscrição - Atletismo</h2>
 
-    <div class="card">
-      <h2>1) Identificação da Unidade de Ensino</h2>
-      <div class="row">
-        <div>
-          <label>Unidade de Ensino</label>
-          <select id="school" required>
-            <option value="">Selecione…</option>
-          </select>
-        </div>
-        <div>
-          <label>Professor Responsável</label>
-          <input id="teacher" type="text" required />
-        </div>
-        <div>
-          <label>Email</label>
-          <input id="email" type="email" required />
-        </div>
-        <div>
-          <label>Telefone</label>
-          <input id="phone" type="tel" required />
-        </div>
-      </div>
-    </div>
+  <label>Escola:</label>
+  <select id="school">
+    <option value="">Selecione...</option>
+    <option>Escola A</option>
+    <option>Escola B</option>
+    <option>Escola C</option>
+  </select>
 
-    <div class="card">
-      <h2>2) Inscrição de Alunos</h2>
-      <div id="students"></div>
-      <button class="btn btn-primary" id="addStudentBtn" type="button">+ Adicionar aluno</button>
-    </div>
+  <label>Professor Responsável:</label>
+  <input type="text" id="teacher">
 
-    <div class="card">
-      <button class="btn btn-primary" id="reviewBtn" type="button">Revisar inscrição</button>
-    </div>
-  </div>
+  <label>Email:</label>
+  <input type="email" id="email">
 
-  <div class="modal" id="reviewModal">
-    <div class="modal-content">
-      <h2>Revisão da Inscrição</h2>
-      <div id="reviewContent"></div>
-      <div style="margin-top:12px; text-align:right;">
-        <button class="btn btn-danger" id="cancelReview">Cancelar</button>
-        <button class="btn btn-primary" id="confirmReview">Confirmar e Enviar</button>
-      </div>
-    </div>
-  </div>
+  <label>Telefone:</label>
+  <input type="text" id="phone">
 
-  <template id="studentTemplate">
-    <div class="card student">
-      <div class="row">
-        <div><label>Nome</label><input type="text" class="inp-name" required></div>
-        <div><label>Data de Nascimento</label><input type="date" class="inp-dob" required></div>
-        <div><label>Documento</label><input type="text" class="inp-doc" required></div>
-        <div>
-          <label>Gênero</label>
-          <select class="sel-gender" required>
-            <option value="">Selecione…</option>
-            <option value="MASCULINO">Masculino</option>
-            <option value="FEMININO">Feminino</option>
-          </select>
-        </div>
-        <div>
-          <label>Categoria</label>
-          <select class="sel-category" required></select>
-        </div>
-      </div>
-      <div class="row">
-        <div><label>Prova 1</label><select class="sel-event1"></select></div>
-        <div><label>Prova 2</label><select class="sel-event2"></select></div>
-        <div><label>Revezamento</label><select class="sel-relay"></select></div>
-      </div>
-      <button class="btn btn-danger btnRemove" type="button">Remover</button>
-    </div>
-  </template>
+  <label>Modalidade:</label>
+  <select id="mode" onchange="toggleMode()">
+    <option value="convencional">Convencional</option>
+    <option value="paradesporto">Paradesporto</option>
+  </select>
+
+  <div id="students"></div>
+  <button type="button" onclick="addStudent()">Adicionar Aluno</button>
+  <br><br>
+  <button type="button" onclick="submitForm()">Enviar Inscrição</button>
 
   <script>
-    const SCHOOLS = {
-      "COLÉGIO MADRE FRANCISCA LAMPEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO"],
-      "COLÉGIO UNI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB DOLORES L. S. KRAUSS": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB FERANDINO DAGNONI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB FREI GODOFREDO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB FREI POLICARPO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB HONÓRIO MIRANDA": ["INFANTIL MASCULINO","INFANTO MASCULINO"],
-      "EEB IVO D´ÁQUINO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB LUIZ FRANZÓI": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB MARINA VIEIRA LEAL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO","INFANTO MASCULINO","INFANTO FEMININO"],
-      "EEB NORMA MÔNICA SABEL": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "EEB PROF OLÍMPIO MORETTO": ["MIRIM MASCULINO","MIRIM FEMININO","INFANTIL MASCULINO","INFANTIL FEMININO"],
-      "IFSC - INSTITUTO FEDERAL DE SC": ["INFANTO MASCULINO","INFANTO FEMININO"]
-    };
+    // Configurações Airtable
+    const apiKey = "SUA_APIKEY_AQUI";
+    const baseId = "SEU_BASEID_AQUI";
+    const tableName = "Inscricoes";
+    const apiUrl = `https://api.airtable.com/v0/${baseId}/${tableName}`;
 
-    const provasPorCategoria = {
-      "MIRIM": ["50m","100m","Salto em distância","Arremesso de peso"],
-      "INFANTIL": ["100m","200m","400m","Salto em altura","Lançamento de dardo"],
-      "INFANTO": ["400m","800m","1500m","Salto triplo","Arremesso de disco"]
-    };
-
-    const revezamentos = ["4x100m","4x400m"];
-    const $  = (s, r=document) => r.querySelector(s);
-    const $$ = (s, r=document) => [...r.querySelectorAll(s)];
-
-    const studentTpl = $("#studentTemplate");
-    const schoolSel  = $("#school");
-
-    // Preenche escolas
-    Object.keys(SCHOOLS).forEach(name => {
-      const o = document.createElement("option");
-      o.value = name;
-      o.textContent = name;
-      schoolSel.appendChild(o);
-    });
-
-    // Eventos
-    $("#addStudentBtn").onclick = addStudent;
-    $("#reviewBtn").onclick     = () => {
-      const data = collectData();
-      if (!data) return;
-      showReview(data);
-    };
-    $("#cancelReview").onclick  = () => $("#reviewModal").style.display = "none";
-
-    // ==================================================================
-    // === CÓDIGO DE ENVIO PARA O AIRTABLE - JÁ CONFIGURADO PARA VOCÊ ===
-    // ==================================================================
-    $("#confirmReview").onclick = () => {
-      const data = collectData();
-      if (!data) return;
-
-      const AIRTABLE_PERSONAL_ACCESS_TOKEN = "patbILwJvHs0SrRGY.b34d40662e3177938fad31bf1281a4d903fc7454870d15b404770de678162e34";
-      const AIRTABLE_BASE_ID = "app3zyXa9UhxQ0CVD";
-      const AIRTABLE_TABLE_NAME = "Inscrições";
-
-      const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`;
-
-      const records = data.students.map(student => ({
-        fields: {
-          "Escola": data.school,
-          "Professor": data.teacher,
-          "Email": data.email,
-          "Telefone": data.phone,
-          "Nome do Aluno": student.name,
-          "Nascimento": student.dob,
-          "Documento": student.doc,
-          "Gênero": student.gender,
-          "Categoria": student.category,
-          "Prova 1": student.prova1,
-          "Prova 2": student.prova2,
-          "Revezamento": student.relay
-        }
-      }));
-
-      // Adiciona um feedback visual para o usuário
-      $("#confirmReview").textContent = 'Enviando...';
-      $("#confirmReview").disabled = true;
-
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ records }),
-      })
-      .then(res => {
-        if (!res.ok) {
-           return res.json().then(error => { throw new Error(JSON.stringify(error)) });
-        }
-        return res.json();
-      })
-      .then(result => {
-        console.log("Sucesso:", result);
-        $("#reviewModal").style.display = "none";
-        alert("Inscrição enviada com sucesso!");
-        location.reload();
-      })
-      .catch(err => {
-        $("#reviewModal").style.display = "none";
-        alert("Erro ao enviar: " + err.message + "\n\nVerifique se os nomes das colunas no Airtable estão corretos e tente novamente.");
-        // Reabilita o botão em caso de erro
-        $("#confirmReview").textContent = 'Confirmar e Enviar';
-        $("#confirmReview").disabled = false;
-      });
-    };
-    // ==================================================================
-    // === FIM DO CÓDIGO DE ENVIO PARA O AIRTABLE =======================
-    // ==================================================================
-
-    function addStudent() {
-      const node = studentTpl.content.firstElementChild.cloneNode(true);
-      $(".btnRemove", node).onclick = () => node.remove();
-
-      const selGender   = $(".sel-gender", node);
-      const selCategory = $(".sel-category", node);
-      const selEvent1   = $(".sel-event1", node);
-      const selEvent2   = $(".sel-event2", node);
-      const selRelay    = $(".sel-relay", node);
-      const inpDob      = $(".inp-dob", node);
-
-      inpDob.onchange = atualizarCategorias;
-      selGender.onchange = atualizarCategorias;
-
-      function atualizarCategorias() {
-        selCategory.innerHTML = `<option value="">Selecione…</option>`;
-        if (schoolSel.value && selGender.value && inpDob.value) {
-          const ano = new Date(inpDob.value).getFullYear();
-          const categoriasPermitidas = filtrarCategoriasPorAno(ano, selGender.value, schoolSel.value);
-          categoriasPermitidas.forEach(cat => {
-            selCategory.innerHTML += `<option>${cat}</option>`;
-          });
-        }
-      }
-
-      selCategory.onchange = () => {
-        const key    = selCategory.value.split(" ")[0];
-        const provas = provasPorCategoria[key] || [];
-        selEvent1.innerHTML = `<option value="">Selecione…</option>`;
-        selEvent2.innerHTML = `<option value="">Selecione…</option>`;
-        provas.forEach(p => {
-          selEvent1.innerHTML += `<option>${p}</option>`;
-          selEvent2.innerHTML += `<option>${p}</option>`;
-        });
-        selRelay.innerHTML = `<option value="">Não</option>`;
-        revezamentos.forEach(r => selRelay.innerHTML += `<option>${r}</option>`);
-      };
-
-      [selEvent1, selEvent2].forEach(current => {
-        const other = current === selEvent1 ? selEvent2 : selEvent1;
-        current.onchange = () => {
-          const val = current.value;
-          if (val && other.value === val) {
-            alert("Este aluno já escolheu essa prova no outro campo.");
-            current.value = "";
-          }
-        };
-      });
-
-      $("#students").appendChild(node);
+    function isParadesporto() {
+      return document.getElementById("mode").value === "paradesporto";
     }
 
-    function filtrarCategoriasPorAno(ano, genero, escola) {
-      let categorias = SCHOOLS[escola] || [];
-      let permitidas = [];
-      const anoAtual = new Date().getFullYear();
-      const idade = anoAtual - ano;
-      
-      // Lógica de idade pode precisar de ajuste fino. Exemplo:
-      // Mirim: 11-13 anos
-      // Infantil: 14-15 anos
-      // Infanto: 16-17 anos
-      // Vou manter a sua lógica original baseada no ano de nascimento
-      categorias.forEach(cat => {
-        if (cat.includes("MIRIM") && ano >= 2012 && ano <= 2015) permitidas.push(cat);
-        if (cat.includes("INFANTIL") && ano >= 2010 && ano <= 2012) permitidas.push(cat);
-        if (cat.includes("INFANTO") && ano >= 2008 && ano <= 2010) permitidas.push(cat);
-      });
+    function toggleMode() {
+      document.getElementById("students").innerHTML = "";
+    }
 
-      // Filtra por gênero também
-      return permitidas.filter(cat => cat.toUpperCase().includes(genero.toUpperCase()));
+    function addStudent() {
+      const container = document.createElement("div");
+      container.className = "student";
+      container.innerHTML = `
+        <label>Nome do Aluno:</label>
+        <input type="text" class="inp-name">
+
+        <label>Data de Nascimento:</label>
+        <input type="date" class="inp-dob">
+
+        <label>Documento:</label>
+        <input type="text" class="inp-doc">
+
+        <label>Gênero:</label>
+        <select class="sel-gender">
+          <option value="">Selecione...</option>
+          <option>Masculino</option>
+          <option>Feminino</option>
+        </select>
+
+        <label>Categoria:</label>
+        <select class="sel-category">
+          <option value="">Selecione...</option>
+          <option>Sub-14</option>
+          <option>Sub-16</option>
+          <option>Sub-18</option>
+        </select>
+
+        <label>Prova 1:</label>
+        <select class="sel-event1">
+          <option value="">Selecione...</option>
+          <option>100m</option>
+          <option>200m</option>
+          <option>Salto em distância</option>
+        </select>
+
+        <label>Prova 2:</label>
+        <select class="sel-event2">
+          <option value="">Selecione...</option>
+          <option>100m</option>
+          <option>200m</option>
+          <option>Salto em distância</option>
+        </select>
+
+        ${isParadesporto() ? `
+          <label>Classificação:</label>
+          <input type="text" class="sel-classification">
+        ` : `
+          <label>Revezamento:</label>
+          <select class="sel-relay">
+            <option value="">Nenhum</option>
+            <option>4x100m</option>
+            <option>4x400m</option>
+          </select>
+        `}
+      `;
+      document.getElementById("students").appendChild(container);
     }
 
     function collectData() {
-      const school  = schoolSel.value;
+      const schoolSel = document.getElementById("school");
+      const school = schoolSel.value;
       if (!school) { alert("Selecione a escola."); return null; }
-      const teacher = $("#teacher").value;
-      const email   = $("#email").value;
-      const phone   = $("#phone").value;
+
+      const teacher = document.getElementById("teacher").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+
       const students = [];
       let valid = true;
-      
-      if(!teacher || !email || !phone) {
-        alert("Preencha todos os dados de identificação da Unidade de Ensino.");
-        return null;
-      }
 
-      $$(".student").forEach(c => {
+      document.querySelectorAll(".student").forEach(c => {
         const st = {
-          name:     $(".inp-name", c).value,
-          dob:      $(".inp-dob",  c).value,
-          doc:      $(".inp-doc",  c).value,
-          gender:   $(".sel-gender",  c).value,
-          category: $(".sel-category", c).value,
-          prova1:   $(".sel-event1",  c).value || "", // Garante que envie string vazia se não selecionado
-          prova2:   $(".sel-event2",  c).value || "",
-          relay:    $(".sel-relay",   c).value || ""
+          "Escola": school,
+          "Professor": teacher,
+          "Email": email,
+          "Telefone": phone,
+          "Nome Do Aluno": c.querySelector(".inp-name").value,
+          "Nascimento": c.querySelector(".inp-dob").value,
+          "Documento": c.querySelector(".inp-doc").value,
+          "Gênero": c.querySelector(".sel-gender").value,
+          "Categoria": c.querySelector(".sel-category").value,
+          "Prova 1": c.querySelector(".sel-event1").value,
+          "Prova 2": c.querySelector(".sel-event2").value,
+          "Revezamento": isParadesporto() ? "" : c.querySelector(".sel-relay").value,
+          "Classificacao": isParadesporto() ? c.querySelector(".sel-classification").value : ""
         };
-        if (!st.name || !st.dob || !st.doc || !st.gender || !st.category) {
-          valid = false;
+
+        if (!st["Nome Do Aluno"] || !st["Nascimento"] || !st["Documento"] || !st["Gênero"] || !st["Categoria"]) valid = false;
+        if (isParadesporto() && !st["Classificacao"]) valid = false;
+
+        const provasEscolhidas = [st["Prova 1"], st["Prova 2"]].filter(Boolean);
+        if (isParadesporto()) {
+          if (provasEscolhidas.length > 3) { alert(`Aluno ${st["Nome Do Aluno"]}: máx. 3 provas.`); valid = false; }
+        } else {
+          const totalIndiv = provasEscolhidas.length;
+          const totalRelay = st["Revezamento"] ? 1 : 0;
+          if (totalIndiv > 2 || totalRelay > 1) {
+            alert(`Aluno ${st["Nome Do Aluno"]}: no Convencional só pode 2 provas + 1 revezamento.`);
+            valid = false;
+          }
         }
         students.push(st);
       });
 
-      if ($$(".student").length === 0) {
-        alert("Adicione pelo menos um aluno à inscrição.");
-        return null;
+      if (!valid) return null;
+
+      // Valida limites no Convencional
+      if (!isParadesporto()) {
+        const contador = {};
+        students.forEach(st => {
+          const keyCat = st["Categoria"];
+          [st["Prova 1"], st["Prova 2"]].forEach(p => {
+            if (p) {
+              const chave = `${keyCat}|${st["Gênero"]}|${p}`;
+              contador[chave] = (contador[chave] || 0) + 1;
+            }
+          });
+          if (st["Revezamento"]) {
+            const chave = `${keyCat}|${st["Gênero"]}|${st["Revezamento"]}`;
+            contador[chave] = (contador[chave] || 0) + 1;
+          }
+        });
+
+        for (let chave in contador) {
+          if (chave.includes("4x")) {
+            if (contador[chave] > 4) { alert(`Limite excedido: só 4 atletas no ${chave}.`); return null; }
+          } else {
+            if (contador[chave] > 2) { alert(`Limite excedido: só 2 atletas por prova/gênero/categoria (${chave}).`); return null; }
+          }
+        }
       }
 
-      if (!valid) {
-        alert("Preencha todos os campos obrigatórios dos alunos (Nome, Nascimento, Documento, Gênero e Categoria).");
-        return null;
-      }
-      return { school, teacher, email, phone, students };
+      return students;
     }
 
-    function showReview(data) {
-      let html = `
-        <p>
-          <b>Escola:</b> ${data.school}<br>
-          <b>Professor:</b> ${data.teacher}<br>
-          <b>Email:</b> ${data.email}<br>
-          <b>Telefone:</b> ${data.phone}
-        </p>
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th><th>Nascimento</th><th>Doc</th>
-              <th>Gênero</th><th>Categoria</th>
-              <th>Prova 1</th><th>Prova 2</th><th>Revezamento</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-      data.students.forEach(s => {
-        html += `
-          <tr>
-            <td>${s.name}</td><td>${s.dob}</td><td>${s.doc}</td>
-            <td>${s.gender}</td><td>${s.category}</td>
-            <td>${s.prova1 || "N/A"}</td><td>${s.prova2 || "N/A"}</td><td>${s.relay || "N/A"}</td>
-          </tr>
-        `;
-      });
-      html += `</tbody></table>`;
-      $("#reviewContent").innerHTML = html;
-      $("#reviewModal").style.display = "flex";
+    async function submitForm() {
+      const data = collectData();
+      if (!data) return;
+
+      try {
+        for (let st of data) {
+          const record = { fields: st };
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${apiKey}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(record)
+          });
+          if (!response.ok) throw new Error("Erro ao enviar dados.");
+        }
+        alert("Inscrição enviada com sucesso!");
+        document.getElementById("students").innerHTML = "";
+      } catch (err) {
+        alert("Erro: " + err.message);
+      }
     }
   </script>
 </body>
